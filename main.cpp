@@ -3,27 +3,17 @@
 #include <fstream>
 #include <map>
 #include <functional>
+#include "./commands/commands.h"
 using namespace std;
 
-int main() {
-    ifstream help("hepl.txt");
-    if (!help.is_open()) {
-        cout << "Fatal! help didn't open \n";
-        return 1;
-    }
 
+int main() {
     cout << "Welcome! waiting for the command:";
+    string line;
     map<string, function<void()>> commands;
+    setupCommands(commands);
 
     
-    string line;
-    commands["help"] = [&help, &line](){
-        help.clear();
-        help.seekg(0);
-        while (getline(help, line)) { 
-        cout << line << endl;      
-        }
-    };
     string command;
     while (true)
     {

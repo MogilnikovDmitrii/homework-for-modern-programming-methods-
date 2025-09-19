@@ -1,1 +1,4 @@
-help 
+Welcome to the library!
+Available commands:
+help - show this help
+exit - exit the program
