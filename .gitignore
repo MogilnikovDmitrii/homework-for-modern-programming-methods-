@@ -1,3 +1,2 @@
 resource/books.txt
-main
-*.exe
+bin/
