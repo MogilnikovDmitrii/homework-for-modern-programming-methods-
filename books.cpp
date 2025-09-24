@@ -9,7 +9,7 @@ int nextId = 0;
 
 void loadLibrary() {
     ifstream file("resources/books.txt");
-    if(!file.is_open()) return;
+    if(!file.is_open()) ofstream file("resources/books.txt");;
 
     string line;
     while (getline(file,line))
@@ -30,8 +30,7 @@ void loadLibrary() {
 void saveBook(const Book& book) {
     ofstream file("resources/books.txt", ios::app);
     if (!file.is_open()) {
-        cout << "Failed to open books.txt for writing!\n";
-        return;
+        ofstream file("resources/books.txt");
     }
     file << book.id << "|" << book.title << "|" << book.author << "\n";
     file.close();

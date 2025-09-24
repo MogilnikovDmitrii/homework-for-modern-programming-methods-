@@ -3,7 +3,7 @@
 #include <fstream>
 #include <map>
 #include <functional>
-#include "./commands/commands.h"
+#include "commands.h"
 using namespace std;
 
 

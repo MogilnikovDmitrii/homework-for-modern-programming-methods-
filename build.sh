@@ -1,2 +1,2 @@
-g++ main.cpp commands/commands.cpp books/books.cpp -o main
+g++ main.cpp commands.cpp books.cpp -o main
 ./main

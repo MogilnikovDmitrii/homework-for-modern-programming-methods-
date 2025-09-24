@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include "../books/books.h"
+#include "books.h"
 using namespace std;
 
 void  Commands(map<string, function<void()>>& commands) {
@@ -38,8 +38,7 @@ void  Commands(map<string, function<void()>>& commands) {
     commands["list"] = []() {
         ifstream file2("resources/books.txt");  
         if (!file2.is_open()) {
-            cout << "Cannot open books.txt\n";
-            return;
+            ofstream file2("resources/books.txt");
         }
         cout << "All books: \n";
         string line2;
