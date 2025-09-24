@@ -2,3 +2,4 @@ Available commands:
 help - show this help
 add - add new book
 exit - exit the program
+list - show all books

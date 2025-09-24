@@ -20,7 +20,7 @@ int main() {
         if (commands.count(command)) {
             commands[command]();
         } else {
-            cout << "Unexpected command!\n";
+            cout << "Unexpected command!\n" << "Enter 'help' to see commands";
         }
     }
     

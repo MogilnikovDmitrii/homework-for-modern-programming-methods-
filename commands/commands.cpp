@@ -38,9 +38,10 @@ void  Commands(map<string, function<void()>>& commands) {
     commands["list"] = []() {
         ifstream file2("resources/books.txt");  
         if (!file2.is_open()) {
-            cout << "Cannot open help.txt\n";
+            cout << "Cannot open books.txt\n";
             return;
         }
+        cout << "All books: \n";
         string line2;
         while (getline(file2, line2)) {
             cout << line2 << endl;
