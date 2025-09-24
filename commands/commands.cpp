@@ -7,7 +7,7 @@ using namespace std;
 
 void  Commands(map<string, function<void()>>& commands) {
     commands["help"] = []() {
-    ifstream file("resource/help.txt");  
+    ifstream file("resources/help.txt");  
     if (!file.is_open()) {
         cout << "Cannot open help.txt\n";
         return;
@@ -36,7 +36,7 @@ void  Commands(map<string, function<void()>>& commands) {
 
     };
     commands["list"] = []() {
-        ifstream file2("resource/books.txt");  
+        ifstream file2("resources/books.txt");  
         if (!file2.is_open()) {
             cout << "Cannot open help.txt\n";
             return;

@@ -5,10 +5,10 @@
 
 
 vector <Book> library;
-int nextId = 1;
+int nextId = 0;
 
 void loadLibrary() {
-    ifstream file("resource/books.txt");
+    ifstream file("resources/books.txt");
     if(!file.is_open()) return;
 
     string line;
@@ -28,7 +28,7 @@ void loadLibrary() {
 }
 
 void saveBook(const Book& book) {
-    ofstream file("resource/books.txt", ios::app);
+    ofstream file("resources/books.txt", ios::app);
     if (!file.is_open()) {
         cout << "Failed to open books.txt for writing!\n";
         return;
