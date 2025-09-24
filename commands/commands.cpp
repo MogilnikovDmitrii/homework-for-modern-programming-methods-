@@ -1,11 +1,13 @@
 #include "commands.h"
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
+#include "../books/books.h"
 using namespace std;
 
-void  setupCommands(map<string, function<void()>>& commands) {
+void  Commands(map<string, function<void()>>& commands) {
     commands["help"] = []() {
-    ifstream file("help.txt");  // локальный поток
+    ifstream file("resource/help.txt");  
     if (!file.is_open()) {
         cout << "Cannot open help.txt\n";
         return;
@@ -14,6 +16,34 @@ void  setupCommands(map<string, function<void()>>& commands) {
     while (getline(file, line)) {
         cout << line << endl;
     }
-};
+    };
+    commands["exit"] = []() {
+        cout << "Exiting...\n";
+        exit(0);
+    };
+    commands["add"] = []() {
+        string author,title;
+        cout << "Enter author: ";
+        getline(cin, author);
+        cout << "Enter title: ";
+        getline(cin, title);
+        nextId += 1;
+        Book newBook{nextId, title, author};
+        library.push_back(newBook);
+        saveBook(newBook);
 
+        cout << "Book added! ID = " << newBook.id << ", Title = " << newBook.title<< ", Author = " << newBook.author << endl;
+
+    };
+    commands["list"] = []() {
+        ifstream file2("resource/books.txt");  
+        if (!file2.is_open()) {
+            cout << "Cannot open help.txt\n";
+            return;
+        }
+        string line2;
+        while (getline(file2, line2)) {
+            cout << line2 << endl;
+        }
+    };
 }

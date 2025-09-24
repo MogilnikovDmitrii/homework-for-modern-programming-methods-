@@ -8,12 +8,10 @@ using namespace std;
 
 
 int main() {
-    cout << "Welcome! waiting for the command:";
+    cout << "Welcome!! waiting for the command:";
     string line;
     map<string, function<void()>> commands;
-    setupCommands(commands);
-
-    
+    Commands(commands);
     string command;
     while (true)
     {
