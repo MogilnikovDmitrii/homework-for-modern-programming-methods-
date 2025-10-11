@@ -13,14 +13,13 @@ int main() {
     map<string, function<void()>> commands;
     Commands(commands);
     string command;
-    while (true)
-    {
+    while (true){
         cout << "> ";
         getline(cin, command);
         if (commands.count(command)) {
             commands[command]();
         } else {
-            cout << "Unexpected command!\n" << "Enter 'help' to see commands";
+            cerr << "Unexpected command!\n" << "Enter 'help' to see commands";
         }
     }
     

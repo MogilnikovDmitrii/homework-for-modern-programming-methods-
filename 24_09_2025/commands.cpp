@@ -9,7 +9,7 @@ void  Commands(map<string, function<void()>>& commands) {
     commands["help"] = []() {
     ifstream file("resources/help.txt");  
     if (!file.is_open()) {
-        cout << "Cannot open help.txt\n";
+        cerr << "Cannot open help.txt\n";
         return;
     }
     string line;
@@ -34,7 +34,7 @@ void  Commands(map<string, function<void()>>& commands) {
 
         cout << "Book added! ID = " << newBook.id << ", Title = " << newBook.title<< ", Author = " << newBook.author << endl;
 
-    };
+    }; // kakashki
     commands["list"] = []() {
         ifstream file2("resources/books.txt");  
         if (!file2.is_open()) {
