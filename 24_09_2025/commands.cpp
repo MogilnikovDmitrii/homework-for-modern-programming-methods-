@@ -1,8 +1,8 @@
-#include "commands.h"
+#include "commands.hpp"
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include "books.h"
+#include "books.hpp"
 using namespace std;
 
 void  Commands(map<string, function<void()>>& commands) {
