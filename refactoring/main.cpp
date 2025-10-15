@@ -1,9 +1,10 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <map>
-#include <functional>
 #include "commands.hpp"
+
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <map>
+#include <string>
 
 int main() {
     std::cout << "Welcome!! waiting for the command:";
@@ -11,6 +12,7 @@ int main() {
     std::map<std::string, std::function<void()>> commands;
     Commands(commands);
     std::string command;
+    
     while (true){
         std::cout << "> ";
         std::getline(std::cin, command);
