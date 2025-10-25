@@ -22,6 +22,4 @@ int main() {
             std::cerr << "Unexpected command!\n" << "Enter 'help' to see commands";
         }
     }
-    
-
 }
