@@ -1,49 +1,52 @@
 #include "commands.hpp"
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
 #include "database.hpp"
-using namespace std;
 
-void  Commands(map<string, function<void()>>& commands) {
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+
+void  initializeCommands(std::map<std::string, std::function<void()>>& commands) {
     commands["help"] = []() {
-    ifstream file("resources/help.txt");  
+    std::ifstream file("resources/help.txt");  
     if (!file.is_open()) {
-        cerr << "Cannot open help.txt\n";
+        std::cerr << "Невозможно открыть файл help.txt\n";
         return;
     }
-    string line;
+    std::string line;
     while (getline(file, line)) {
-        cout << line << endl;
+        std::cout << line << std::endl;
     }
     };
     commands["exit"] = []() {
-        cout << "Exiting...\n";
+        std::cout << "Выход...\n";
         exit(0);
     };
     commands["add"] = []() {
-        string author,title;
-        cout << "Enter author: ";
-        getline(cin, author);
-        cout << "Enter title: ";
-        getline(cin, title);
+        std::string author,title;
+        std::cout << "Введите автора: ";
+        getline(std::cin, author);
+        std::cout << "Введите название: ";
+        getline(std::cin, title);
         nextId += 1;
         Book newBook{nextId, title, author};
         library.push_back(newBook);
         saveBook(newBook);
 
-        cout << "Book added! ID = " << newBook.id << ", Title = " << newBook.title<< ", Author = " << newBook.author << endl;
+        std::cout << "Книга добавлена! ID = " << newBook.id 
+        << ", Название: " << newBook.title
+        << ", Автор: " << newBook.author 
+        << std::endl;
 
-    }; // kakashki
+    }; 
     commands["list"] = []() {
-        ifstream file2("resources/books.txt");  
+        std::ifstream file2("resources/books.txt");  
         if (!file2.is_open()) {
-            ofstream file2("resources/books.txt");
+            std::ofstream file2("resources/books.txt");
         }
-        cout << "All books: \n";
-        string line2;
+        std::cout << "Список книг: \n";
+        std::string line2;
         while (getline(file2, line2)) {
-            cout << line2 << endl;
+            std::cout << line2 << std::endl;
         }
     };
 }

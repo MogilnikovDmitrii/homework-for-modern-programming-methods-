@@ -1,6 +1,7 @@
 #pragma once
-#include <map>
+
 #include <functional>
+#include <map>
 #include <string>
 
-void Commands(std::map<std::string, std::function<void()>>& commands);
+void initializeCommands(std::map<std::string, std::function<void()>>& commands);

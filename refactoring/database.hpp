@@ -1,14 +1,15 @@
 #pragma once
-#include <vector>
+
 #include <string>
-using namespace std;
+#include <vector>
 
 struct Book {
-    int id;
-    string title;
-    string author;
+    const int id;
+    std::string title;
+    std::string author;
 };
-extern vector <Book> library;
+
+extern std::vector <Book> library;
 extern int nextId;
 
 void loadLibrary();

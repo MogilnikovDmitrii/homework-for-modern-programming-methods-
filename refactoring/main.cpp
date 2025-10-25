@@ -7,10 +7,10 @@
 #include <string>
 
 int main() {
-    std::cout << "Welcome!! waiting for the command:";
-    std::string line;
+    std::cout << "Добро пожаловать!! Ожидание команды:";
     std::map<std::string, std::function<void()>> commands;
-    Commands(commands);
+    initializeCommands(commands);
+
     std::string command;
     
     while (true){
@@ -19,7 +19,8 @@ int main() {
         if (commands.count(command)) {
             commands[command]();
         } else {
-            std::cerr << "Unexpected command!\n" << "Enter 'help' to see commands";
+            std::cerr << "Неизвестная команда!\n" 
+            << "Введите 'help' чтобы увидеть список команд";
         }
     }
 }
