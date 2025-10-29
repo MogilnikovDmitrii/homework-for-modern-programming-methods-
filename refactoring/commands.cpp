@@ -28,6 +28,7 @@ void  initializeCommands(std::map<std::string, std::function<void()>>& commands)
         std::cout << "Введите название: ";
         getline(std::cin, title);
         nextId += 1;
+        
         Book newBook{nextId, title, author};
         library.push_back(newBook);
         saveBook(newBook);
