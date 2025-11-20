@@ -1,23 +1,28 @@
 #include <iostream>
 
+#include "menu.hpp"
+#include "menu_func.hpp"
+
 int main() {
+	DmMog:: MenuItem study {"1 - я хочу учиться!!!", DmMog::study};
+        DmMog:: MenuItem exit {"0 - я хочу домой(", DmMog::exit};
+
+        DmMog:: MenuItem* mainChildren[] = { &exit, &study};
+		const int mainSize = sizeof(mainChildren) / sizeof(mainChildren[0]);
+
 	int user_input;
 	do {
-		std:: cout << "Приветственный текст" << std:: endl ;
-       		std:: cout << "1 - я хочу учиться математике" << std:: endl ;
-        	std:: cout << "0 - я просто хочу пожить" << std:: endl ;
-	        std:: cout << "Обучайка:" << std:: endl ;
-
-		std:: cin >> user_input;
-
-		if (user_input){
-			std:: cout << "вперед !";
-		} 
-		else {
-			exit(0);
+		std:: cout << "приветственный текст" << std::endl;
+		for(int i = 1; i < mainSize; i++){
+			std:: cout << mainChildren[i]->title << std::endl;
 		}
+		std:: cout << mainChildren[0]->title<< std::endl;
+		std:: cout <<"Обучайка:";
+		
+		std:: cin >> user_input;
+		mainChildren[user_input]->func();
 
-		std:: cout << std:: endl;
+	        std:: cout << std:: endl;
 	} while(true);
 
 	return 0;
