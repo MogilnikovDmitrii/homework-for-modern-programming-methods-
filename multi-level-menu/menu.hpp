@@ -1,6 +1,14 @@
+#pragma once
+
+
 namespace DmMog {
 	struct MenuItem {
 		const char* const title;
-		void (*func)();
+		const MenuItem* (*func)(const MenuItem* current);
+
+		const MenuItem* const *children;
+		const int childrenCount;
+		
+		const MenuItem* parent;
 	};
 }
