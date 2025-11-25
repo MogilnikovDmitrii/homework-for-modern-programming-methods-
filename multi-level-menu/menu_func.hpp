@@ -8,9 +8,16 @@ namespace DmMog {
 
 	const MenuItem* show_menu(const MenuItem* current);
 
-	const MenuItem* study_summ(const MenuItem* current);
-        const MenuItem* study_substract(const MenuItem* current);
-        const MenuItem* study_multiple(const MenuItem* current);
-        const MenuItem* study_divide(const MenuItem* current);
-        const MenuItem* study_back(const MenuItem* current);
+	const MenuItem* algebra_summ(const MenuItem* current);
+        const MenuItem* algebra_substract(const MenuItem* current);
+        const MenuItem* algebra_multiple(const MenuItem* current);
+        const MenuItem* algebra_divide(const MenuItem* current);
+        
+        const MenuItem* go_back(const MenuItem* current);
+
+        const MenuItem* integral(const MenuItem* current);
+        const MenuItem* differential(const MenuItem* current);
+
+
+
 }

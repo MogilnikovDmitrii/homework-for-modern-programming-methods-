@@ -17,27 +17,40 @@ const DmMog:: MenuItem* DmMog:: show_menu(const MenuItem* current) {
 
 	return current->children[user_input];
 }
-const DmMog:: MenuItem* DmMog:: study_back(const MenuItem* current) {
-    return current->parent->parent;
-}
+
 
 const DmMog:: MenuItem* DmMog:: exit(const MenuItem* current) {
 	std:: exit(0);
 }
-const DmMog:: MenuItem* DmMog:: study_summ(const MenuItem* current) {
+
+
+
+const DmMog:: MenuItem* DmMog:: algebra_summ(const MenuItem* current) {
 	std:: cout << current->title << std::endl;
 	return current->parent;
 }
-const DmMog:: MenuItem* DmMog:: study_substract(const MenuItem* current) {
+const DmMog:: MenuItem* DmMog:: algebra_substract(const MenuItem* current) {
     std:: cout << current->title << std::endl;
     return current->parent;
 }
-const DmMog:: MenuItem* DmMog:: study_multiple(const MenuItem* current) {
+const DmMog:: MenuItem* DmMog:: algebra_multiple(const MenuItem* current) {
     std:: cout << current->title << std::endl;
     return current->parent;
 }
-const DmMog:: MenuItem* DmMog:: study_divide(const MenuItem* current) {
+const DmMog:: MenuItem* DmMog:: algebra_divide(const MenuItem* current) {
     std:: cout << current->title << std::endl;
     return current->parent;
+}
+const DmMog:: MenuItem* DmMog:: go_back(const MenuItem* current) {
+    return current->parent->parent;
 }
 
+
+const DmMog:: MenuItem* DmMog:: differential(const MenuItem* current) {
+    std:: cout << current->title << std::endl;
+    return current->parent;
+}
+const DmMog:: MenuItem* DmMog:: integral(const MenuItem* current) {
+    std:: cout << current->title << std::endl;
+    return current->parent;
+}
