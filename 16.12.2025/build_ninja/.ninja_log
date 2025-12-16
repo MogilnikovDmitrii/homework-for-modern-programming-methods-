@@ -1,0 +1,11 @@
+# ninja log v5
+3	282	1765911008801008225	projects/multi-level-menu/CMakeFiles/multi-level-menu.dir/menu_items.cpp.o	628dff1b1e2545df
+1	27	1765911225116040870	projects/sort/src/libsort_lib.a	943322639593e290
+2	295	1765911008815008325	projects/multi-level-menu/CMakeFiles/multi-level-menu.dir/main.cpp.o	504bfd37c1e77498
+2	351	1765911225439567537	projects/sort/test/CMakeFiles/test_bubble.dir/test_bubble.cpp.o	b7d82ca1982517c5
+3	315	1765911008835008469	projects/multi-level-menu/CMakeFiles/multi-level-menu.dir/menu_func.cpp.o	3aa3352a1a5e80fd
+315	398	1765911008915533582	projects/multi-level-menu/multi-level-menu	806589b80c5752cd
+4	511	1765911009030009873	projects/sort/src/CMakeFiles/sort_lib.dir/bubble_sort.cpp.o	1d65a0ce694a4bd4
+3	361	1765911318122133232	projects/sort/src/CMakeFiles/sort_lib.dir/bubble_sort.cpp.o	1d65a0ce694a4bd4
+361	387	1765911318147234838	projects/sort/src/libsort_lib.a	943322639593e290
+387	485	1765911318243538887	projects/sort/test/test_bubble	887bfe1f155a972

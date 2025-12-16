@@ -22,16 +22,4 @@ void bubble_sort(std::vector<int>& data)
     }
 }
 
-int main()
-{
-    std::vector<int> v = {5, 1, 4, 2, 8};
-
-    bubble_sort(v);
-
-    for (int x : v)
-        std::cout << x << " ";
-
-    std::cout << std::endl;
-    return 0;
-}
 
