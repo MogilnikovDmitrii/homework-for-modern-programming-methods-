@@ -1,58 +1,47 @@
-#include <cassert>
-#include <vector>
-#include <iostream>
-
+#include <gtest/gtest.h>
 #include "bubble_sort.hpp"
 
-void test_sorted_array()
+TEST(BubbleSortTest, AlreadySorted)
 {
-    std::vector<int> v = {1, 2, 3, 4, 5};
-    bubble_sort(v);
+    int arr[] = {1, 2, 3, 4, 5};
+    bubble_sort(arr, 5);
 
-    assert((v == std::vector<int>{1, 2, 3, 4, 5}));
+    int expected[] = {1, 2, 3, 4, 5};
+    for (int i = 0; i < 5; ++i)
+        EXPECT_EQ(arr[i], expected[i]);
 }
 
-void test_reverse_array()
+TEST(BubbleSortTest, ReverseOrder)
 {
-    std::vector<int> v = {5, 4, 3, 2, 1};
-    bubble_sort(v);
+    int arr[] = {5, 4, 3, 2, 1};
+    bubble_sort(arr, 5);
 
-    assert((v == std::vector<int>{1, 2, 3, 4, 5}));
+    int expected[] = {1, 2, 3, 4, 5};
+    for (int i = 0; i < 5; ++i)
+        EXPECT_EQ(arr[i], expected[i]);
 }
 
-void test_random_array()
+TEST(BubbleSortTest, RandomValues)
 {
-    std::vector<int> v = {3, 1, 4, 1, 5};
-    bubble_sort(v);
+    int arr[] = {3, 1, 4, 1, 5};
+    bubble_sort(arr, 5);
 
-    assert((v == std::vector<int>{1, 1, 3, 4, 5}));
+    int expected[] = {1, 1, 3, 4, 5};
+    for (int i = 0; i < 5; ++i)
+        EXPECT_EQ(arr[i], expected[i]);
 }
 
-void test_empty_array()
+TEST(BubbleSortTest, SingleElement)
 {
-    std::vector<int> v;
-    bubble_sort(v);
+    int arr[] = {42};
+    bubble_sort(arr, 1);
 
-    assert(v.empty());
+    EXPECT_EQ(arr[0], 42);
 }
 
-void test_single_element()
+TEST(BubbleSortTest, EmptyArray)
 {
-    std::vector<int> v = {42};
-    bubble_sort(v);
-
-    assert(v[0] == 42);
-}
-
-int main()
-{
-    test_sorted_array();
-    test_reverse_array();
-    test_random_array();
-    test_empty_array();
-    test_single_element();
-
-    std::cout << "All bubble_sort tests passed ✅" << std::endl;
-    return 0;
+    bubble_sort(nullptr, 0);
+    SUCCEED();
 }
 

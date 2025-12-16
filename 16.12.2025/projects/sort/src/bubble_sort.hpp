@@ -1,4 +1,4 @@
 #pragma once
 #include <vector>
 
-void bubble_sort(std::vector<int>& data);
+void bubble_sort(int* data, std::size_t size);

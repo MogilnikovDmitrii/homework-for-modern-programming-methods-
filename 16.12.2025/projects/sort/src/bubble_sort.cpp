@@ -1,14 +1,16 @@
-#include <iostream>
-#include <vector>
-#include <utility> 
+#include "bubble_sort.hpp"
+#include <utility>
 
-void bubble_sort(std::vector<int>& data)
+void bubble_sort(int* data, std::size_t size)
 {
-    bool swapped;
-    for (std::size_t i = 0; i < data.size(); ++i)
+    if (data == nullptr || size < 2)
+        return;
+
+    for (std::size_t i = 0; i < size - 1; ++i)
     {
-        swapped = false;
-        for (std::size_t j = 0; j + 1 < data.size() - i; ++j)
+        bool swapped = false;
+
+        for (std::size_t j = 0; j < size - 1 - i; ++j)
         {
             if (data[j] > data[j + 1])
             {
@@ -21,5 +23,4 @@ void bubble_sort(std::vector<int>& data)
             break;
     }
 }
-
 
