@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/long_numbers_tests.dir/tests/long_numbers_test.cpp.o -o long_numbers_tests  liblong_numbers.a lib/libgtest.a lib/libgtest_main.a lib/libgtest.a 

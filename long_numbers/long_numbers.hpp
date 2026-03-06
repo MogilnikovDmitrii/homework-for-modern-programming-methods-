@@ -36,6 +36,9 @@ namespace DmMog {
 			LongNumber operator % (const LongNumber& x) const;
 			
 			bool is_negative() const noexcept;
+			LongNumber module() const noexcept;
+			LongNumber change_of_sign()const noexcept;
+			
 			
 			friend std::ostream& operator << (std::ostream &os, const LongNumber& x);
 			
