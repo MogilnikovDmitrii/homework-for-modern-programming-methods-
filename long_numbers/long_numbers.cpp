@@ -15,6 +15,41 @@ LongNumber::~LongNumber() {
 	delete[] numbers;
 }
 
+
+LongNumber::LongNumber(int value) {
+    if(value == 0){
+        init_zero();
+        return;
+    }
+	int rank = 0,pow = 1;
+    if(value >= 0){
+        sign = 1;
+    } else{
+        sign = -1;
+    }
+
+    if(value < 0){
+        value *= -1;
+    }
+    while ( value - pow >= 0)
+    {
+        rank++;
+        pow *= 10;
+    }
+    length = rank;
+    numbers = new int[rank]();
+    rank = 0;
+    pow = 1;
+    while (rank < length)
+    {
+        numbers[rank] = (value/pow)%10;
+        rank ++;
+        pow *= 10;
+    }
+    
+    
+}
+
 LongNumber::LongNumber(const char* const str) {
     int len = get_length(str);
     if(len == 0){
@@ -314,27 +349,27 @@ LongNumber LongNumber::operator * (const LongNumber& x) const {
 LongNumber LongNumber::operator / (const LongNumber& x) const {
 	if(x.module() == module()) {
         if(sign == x.sign){
-            return LongNumber("1");
+            return 1;
         } else{
-            return LongNumber("-1");
+            return -1;
         }
     }
     if(x.module() > module()) {
-        return LongNumber("0");
+        return 0;
     }
     int length_of_div = length;
     int* numbers_of_div = new int[length_of_div]();
-    LongNumber remainder("0");
+    LongNumber remainder = 0;
 
     for(int i = length-1; i >= 0; i--)
     {
-        remainder = remainder * LongNumber("10");
-        LongNumber digit(std::to_string(numbers[i]).c_str());
+        remainder = remainder * 10;
+        LongNumber digit(numbers[i]);
         remainder = remainder + digit;
 
         for(int j = 9; j >= 0; j--)
         {
-            LongNumber d(std::to_string(j).c_str());
+            LongNumber d(j);
 
             if(x.module() * d < remainder or x.module() * d == remainder)
             {
@@ -353,13 +388,21 @@ LongNumber LongNumber::operator / (const LongNumber& x) const {
     LongNumber Div;
     Div.length = length_of_div;
     Div.numbers = numbers_of_div;
+    if(*this < 0 && (module() - x.module()*Div) != 0){
+        Div = Div + 1;
+    }
     Div.sign = sign * x.sign;
+ 
     return Div;
 
 }
 
 LongNumber LongNumber::operator % (const LongNumber& x) const {
-	return *this - x * (*this / x);
+    LongNumber a = *this - x * (*this / x);
+    // if(a < LongNumber("0")){
+    //     a = a + x.module();
+    // }
+	return a;
 }
 
 
@@ -435,7 +478,9 @@ namespace DmMog {
 
 
 // int main() {
-//     DmMog:: LongNumber a = "1000";
-//     DmMog:: LongNumber b = "1";
-//     std::cout << a * b ;
+//     DmMog:: LongNumber a = 10;
+//     DmMog:: LongNumber b = 140;
+
+    
+//     std::cout << a + b ;
 // }

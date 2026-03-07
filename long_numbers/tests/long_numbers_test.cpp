@@ -380,7 +380,7 @@ TEST(LongNumberTest, ModuloNegativeDividend) {
     LongNumber a("-17");
     LongNumber b("5");
 
-    EXPECT_EQ(a % b, LongNumber("-2"));
+    EXPECT_EQ(a % b, LongNumber("3"));
 }
 
 TEST(LongNumberTest, ModuloNegativeDivisor) {
@@ -394,7 +394,7 @@ TEST(LongNumberTest, ModuloTwoNegatives) {
     LongNumber a("-17");
     LongNumber b("-5");
 
-    EXPECT_EQ(a % b, LongNumber("-2"));
+    EXPECT_EQ(a % b, LongNumber("3"));
 }
 
 TEST(LongNumberTest, ModuloLargeNumbers) {

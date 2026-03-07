@@ -12,10 +12,20 @@ add_subdirectory(googletest/googletest)
 enable_testing()
 
 add_executable(long_numbers_tests tests/long_numbers_test.cpp)
+
 target_link_libraries(long_numbers_tests
     long_numbers
     gtest
     gtest_main
 )
 
+# target_link_libraries(new_tests
+#     long_numbers
+#     gtest
+#     gtest_main
+# )
+
+
+
 add_test(NAME LongNumberTests COMMAND long_numbers_tests)
+# add_test(NAME Newtests COMMAND new_tests)

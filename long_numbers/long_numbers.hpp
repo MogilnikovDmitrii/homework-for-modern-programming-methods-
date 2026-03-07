@@ -15,6 +15,7 @@ namespace DmMog {
 		public:
 			LongNumber();
 			LongNumber(const char* const str);
+			LongNumber(int value);
 			LongNumber(const LongNumber& x);
 			LongNumber(LongNumber&& x) noexcept;
 			
