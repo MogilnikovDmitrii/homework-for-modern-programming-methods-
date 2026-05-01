@@ -14,6 +14,8 @@ typedef struct SObject{
     float VertSpeed;
     bool IsFly;
     char ObType;
+    float HorSpeed;
+
 
 } TObject;
 
@@ -24,6 +26,9 @@ int FloorLen;
 int level = 1;
 int needReload = 0;
 int maxLevel = 2;
+
+TObject *enemys = NULL;
+int enemysLen;
 
 void setNonBlocking() {
     struct termios ttystate;
@@ -71,8 +76,8 @@ void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeigh
     obj->heigth = oHeight;
     obj->VertSpeed = 0; 
     obj->ObType = inType;
+    obj->HorSpeed = 0.2;
 }
-
 bool IsCollision(TObject o1, TObject o2);
 void CreateLevel(int lvl);
 
@@ -98,6 +103,33 @@ void FallingOfObject(TObject *obj) {
     }
 }
 
+void PersonCollision(){
+    for(int i = 0; i < enemysLen; i++){
+        if(IsCollision(mario,enemys[i])){
+            CreateLevel(level);
+        }
+    }
+}
+
+
+void HorizObjMove(TObject *obj) {
+    obj[0].x += obj[0].HorSpeed;
+    for(int i = 0 ; i < FloorLen; i++){
+        if (IsCollision(obj[0],Floor[i])){
+            obj[0].x -= obj[0].HorSpeed;
+            obj[0].HorSpeed *= -1;
+            return;
+        }
+    }
+    TObject tmp = *obj;
+    FallingOfObject(&tmp);
+    if(tmp.IsFly == true){
+        obj[0].x -= obj[0].HorSpeed;
+        obj[0].HorSpeed *= -1;
+    }
+}
+
+
 bool IsPosOnMap(int x, int y) {
     return  ((x >= 0) && (y >= 0) && (x < mapWidth) && (y < mapHeight));
 }
@@ -122,6 +154,9 @@ void HorisontalMapMove(float dx){
     for(int i = 0; i < FloorLen; i++){
         Floor[i].x += dx;
     }
+     for(int i = 0; i < enemysLen; i++){
+        enemys[i].x += dx;
+    }
     for(int i = 0; i < FloorLen; i++){
         if(IsCollision(mario, Floor[i])){
             for(int j = 0; j < FloorLen; j++){
@@ -139,15 +174,17 @@ bool IsCollision(TObject o1, TObject o2) {
 
 void CreateLevel(int lvl) {
     InitObject(&mario,39,10, 3, 3,'$');
-    if (lvl == 1){
+    if (lvl == 2){
         FloorLen = 4;
-        Floor = (TObject*)realloc(Floor, sizeof(TObject) * FloorLen);
+        Floor = (TObject*)realloc(Floor, sizeof(*Floor) * FloorLen);
         InitObject(Floor+0,20,20,40,5,'#');
         InitObject(Floor+1,80,20,15,5,'#');
         InitObject(Floor+2,120,15,15,10,'#');
         InitObject(Floor+3,160,10,15,15,'+');
+        
+
     }
-    if (lvl == 2){
+    if (lvl == 1){
         FloorLen = 6;
         Floor = (TObject*)realloc(Floor, sizeof(TObject) * FloorLen);
         InitObject(Floor+0,20,20,40,5,'#');
@@ -156,6 +193,9 @@ void CreateLevel(int lvl) {
         InitObject(Floor+3,120,15,10,10,'#');
         InitObject(Floor+4,150,20,40,5,'#');
         InitObject(Floor+5,210,15,10,10,'+');
+        enemysLen = 1;
+        enemys = (TObject*)realloc(enemys, sizeof(*enemys) * enemysLen);
+        InitObject(enemys+0,25,10,3,2,'%');
     }
 
 }
@@ -197,10 +237,19 @@ int main() {
             needReload = 0;
             CreateLevel(level);
         }
+
         ClearMap();
         FallingOfObject(&mario);
+        PersonCollision();
+
         for(int i = 0; i < FloorLen;i++){
             PutObjectOnMap(Floor[i]);        
+        }
+        for(int i = 0; i < enemysLen;i++){
+            FallingOfObject(enemys + i);
+            HorizObjMove(enemys + i);
+            PutObjectOnMap(enemys[i]); 
+
         }
         PutObjectOnMap(mario);
         ShowMap();
