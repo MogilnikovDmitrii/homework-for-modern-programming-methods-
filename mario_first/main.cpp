@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <fcntl.h>
-
+#include <algorithm>
 #define mapWidth 80
 #define mapHeight 25
 
@@ -12,14 +12,19 @@ typedef struct SObject{
     float x,y;
     float width,heigth;
     float VertSpeed;
+    bool IsFly;
+    char ObType;
 
 } TObject;
 
 char map[mapHeight][mapWidth+1];
 TObject mario;
-TObject Floor[1];
+TObject *Floor = NULL;
+int FloorLen;
+int level = 1;
+int needReload = 0;
+int maxLevel = 2;
 
-// --- ДОБАВЛЯЕМ ---
 void setNonBlocking() {
     struct termios ttystate;
 
@@ -29,11 +34,10 @@ void setNonBlocking() {
 
     fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 }
-// ------------------
 
 void ClearMap(){
     for (int i = 0; i < mapWidth; i++){
-        map[0][i] = '.';
+        map[0][i] = ' ';
     }
     map[0][mapWidth] = '\0';
 
@@ -44,9 +48,16 @@ void ClearMap(){
 
 void ShowMap() {
     printf("\033[H\033[J"); // очистка экрана
+
+    // фон + текст (аналог 9F: яркий белый + синий фон)
+    printf("\033[97;44m");
+
     for (int j = 0; j < mapHeight; j++){
         printf("%s\n", map[j]);
     }
+
+    // сброс цвета
+    printf("\033[0m");
 }
 
 void SetObjectPos(TObject *obj, float xPos, float yPos){
@@ -54,21 +65,36 @@ void SetObjectPos(TObject *obj, float xPos, float yPos){
     obj->y = yPos;
 }
 
-void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeight){
+void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeight,char inType){
     SetObjectPos(obj,xPos,yPos);
     obj->width = oWidth;
     obj->heigth = oHeight;
     obj->VertSpeed = 0; 
+    obj->ObType = inType;
 }
 
 bool IsCollision(TObject o1, TObject o2);
+void CreateLevel(int lvl);
 
 void FallingOfObject(TObject *obj) {
     obj->VertSpeed += 0.05;
+    obj->IsFly = true;
     SetObjectPos(obj, obj->x, obj->y + obj->VertSpeed);
-    if (IsCollision(*obj,Floor[0])){
-        obj->y -= obj->VertSpeed;
-        obj->VertSpeed = 0;
+    for(int i = 0; i < FloorLen; i++){
+        if (IsCollision(*obj,Floor[i])){
+            obj->y -= obj->VertSpeed;
+            obj->VertSpeed = 0;
+            obj->IsFly = false;
+            if(Floor[i].ObType == '+'){
+                level++;
+
+                if (level > maxLevel){
+                    level = 1;
+                }
+                needReload = 1;
+            }
+            break;
+        }
     }
 }
 
@@ -84,8 +110,24 @@ void PutObjectOnMap(TObject obj){
     for (int i = ix; i < ix + iWidth; i++){
         for(int j = iy; j < iy + iHeigth;j++){
             if (IsPosOnMap(i,j)){
-                map[j][i] = '$';
+                map[j][i] = obj.ObType;
             }
+        }
+    }
+}
+
+
+
+void HorisontalMapMove(float dx){
+    for(int i = 0; i < FloorLen; i++){
+        Floor[i].x += dx;
+    }
+    for(int i = 0; i < FloorLen; i++){
+        if(IsCollision(mario, Floor[i])){
+            for(int j = 0; j < FloorLen; j++){
+                Floor[j].x -= dx;
+            }
+            return;
         }
     }
 }
@@ -95,27 +137,77 @@ bool IsCollision(TObject o1, TObject o2) {
     (o1.y + o1.heigth > o2.y) && (o1.y < o2.y + o2.heigth));
 }
 
+void CreateLevel(int lvl) {
+    InitObject(&mario,39,10, 3, 3,'$');
+    if (lvl == 1){
+        FloorLen = 4;
+        Floor = (TObject*)realloc(Floor, sizeof(TObject) * FloorLen);
+        InitObject(Floor+0,20,20,40,5,'#');
+        InitObject(Floor+1,80,20,15,5,'#');
+        InitObject(Floor+2,120,15,15,10,'#');
+        InitObject(Floor+3,160,10,15,15,'+');
+    }
+    if (lvl == 2){
+        FloorLen = 6;
+        Floor = (TObject*)realloc(Floor, sizeof(TObject) * FloorLen);
+        InitObject(Floor+0,20,20,40,5,'#');
+        InitObject(Floor+1,60,15,10,10,'#');
+        InitObject(Floor+2,80,20,20,5,'#');
+        InitObject(Floor+3,120,15,10,10,'#');
+        InitObject(Floor+4,150,20,40,5,'#');
+        InitObject(Floor+5,210,15,10,10,'+');
+    }
+
+}
+
+
+
 int main() {
-    InitObject(&mario,39 ,10 ,3 ,3);
-    InitObject(Floor, 20,20,40,5);
-    setNonBlocking(); // <-- важно
+    CreateLevel(level);
+    system("color 9F");
+    setNonBlocking();
 
     char key;
+    int moveLeft = 0, moveRight = 0;
 
     do {
+        moveLeft = 0;
+        moveRight = 0;
+
+        while (read(STDIN_FILENO, &key, 1) > 0) {
+            if (key == 27) return 0;
+
+            if (key == ' ') {
+                if (!mario.IsFly) {
+                    mario.VertSpeed = -1.3;
+                }
+            }
+
+            if (key == 'a') moveLeft = 1;
+            if (key == 'd') moveRight = 1;
+        }
+        if (moveRight > 0) {
+            HorisontalMapMove(-2);
+        }
+
+        if (moveLeft > 0) {
+            HorisontalMapMove(2);
+        }
+        if (needReload || mario.y > mapHeight) {
+            needReload = 0;
+            CreateLevel(level);
+        }
         ClearMap();
         FallingOfObject(&mario);
-        PutObjectOnMap(Floor[0]);
+        for(int i = 0; i < FloorLen;i++){
+            PutObjectOnMap(Floor[i]);        
+        }
         PutObjectOnMap(mario);
         ShowMap();
 
-        // читаем клавишу (если есть)
-        if (read(STDIN_FILENO, &key, 1) > 0) {
-            if (key == 27) break; // ESC
-        }
-        usleep(50000); // 50 мс
-    } while (true);
-    
-    
+        usleep(25000);
+
+    } while (1);
+
     return 0;
 }
