@@ -54,7 +54,7 @@ void ClearMap(){
 void ShowMap() {
     printf("\033[H\033[J"); // очистка экрана
 
-    // фон + текст (аналог 9F: яркий белый + синий фон)
+    // фон и текст 
     printf("\033[97;44m");
 
     for (int j = 0; j < mapHeight; j++){
@@ -103,12 +103,27 @@ void FallingOfObject(TObject *obj) {
     }
 }
 
+void DeleteObj(int i) {
+    enemysLen--;
+    enemys[i] = enemys[enemysLen];
+    enemys = (TObject*)realloc(enemys, sizeof(enemys) * enemysLen);
+
+}
+
 void PersonCollision(){
     for(int i = 0; i < enemysLen; i++){
         if(IsCollision(mario,enemys[i])){
-            CreateLevel(level);
+            if((mario.IsFly == true) && (mario.VertSpeed > 0) && (mario.y + mario.heigth < enemys[i].y + enemys[i].heigth * 0.5)){
+                DeleteObj(i);
+                i--;
+                continue;
+            } else {
+                CreateLevel(level); 
+            }
+
         }
     }
+
 }
 
 
@@ -161,6 +176,9 @@ void HorisontalMapMove(float dx){
         if(IsCollision(mario, Floor[i])){
             for(int j = 0; j < FloorLen; j++){
                 Floor[j].x -= dx;
+            }
+            for(int j = 0; j < enemysLen; j++){
+                enemys[j].x -= dx;
             }
             return;
         }
@@ -248,7 +266,12 @@ int main() {
         for(int i = 0; i < enemysLen;i++){
             FallingOfObject(enemys + i);
             HorizObjMove(enemys + i);
-            PutObjectOnMap(enemys[i]); 
+            PutObjectOnMap(enemys[i]);
+            if(enemys[i].y > mapHeight){
+                DeleteObj(i);
+                i--;
+                continue;
+            } 
 
         }
         PutObjectOnMap(mario);
