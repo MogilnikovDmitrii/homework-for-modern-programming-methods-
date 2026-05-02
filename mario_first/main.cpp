@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <string.h>
 #include <algorithm>
 #define mapWidth 80
 #define mapHeight 25
@@ -24,6 +25,7 @@ TObject mario;
 TObject *Floor = NULL;
 int FloorLen;
 int level = 1;
+int score;
 int needReload = 0;
 int maxLevel = 2;
 
@@ -55,7 +57,7 @@ void ClearMap(){
 void ShowMap() {
     printf("\033[H");
     printf("%s", MapColor);
-    printf("\033[J");
+    printf("\033[J");   
 
     for (int j = 0; j < mapHeight; j++){
         printf("%s\n", map[j]);
@@ -96,6 +98,7 @@ void PlayerDead() {
 bool IsCollision(TObject o1, TObject o2);
 
 TObject *GetNewEn();
+
 void FallingOfObject(TObject *obj) {
     obj->VertSpeed += 0.05;
     obj->IsFly = true;
@@ -107,6 +110,8 @@ void FallingOfObject(TObject *obj) {
             if((Floor[i].ObType == '?') && (obj[0].VertSpeed < 0) && (obj == &mario)){
                 Floor[i].ObType = '-';
                 InitObject(GetNewEn(), Floor[i].x, Floor[i].y-3,3,2,'$');
+                enemys[enemysLen -1].VertSpeed = -0.3;
+
             }
 
 
@@ -143,6 +148,7 @@ void PersonCollision(){
                 if((mario.IsFly == true) && (mario.VertSpeed > 0) && (mario.y + mario.heigth < enemys[i].y + enemys[i].heigth * 0.5)){
                     DeleteObj(i);
                     i--;
+                    score += 5;
                     continue;
                 } else {
                     PlayerDead();
@@ -150,6 +156,7 @@ void PersonCollision(){
             } else if(enemys[i].ObType == '$'){
                 DeleteObj(i);
                 i--;
+                score += 10;
                 continue;
             }
         }
@@ -236,7 +243,14 @@ TObject *GetNewEn() {
     return enemys + enemysLen -1;
 }
 
-
+void ShowScore() {
+    char c[30];
+    sprintf(c, "Score: %d", score);
+    int len = strlen(c);
+    for(int i = 0; i < len; i++){
+        map[1][i+5] = c[i];
+    }
+}
 void CreateLevel(int lvl) {
     FloorLen = 0;
     Floor = (TObject*)realloc(Floor,0);
@@ -247,6 +261,7 @@ void CreateLevel(int lvl) {
 
 
     if(lvl == 1){
+        score = 0;
         Floor = (TObject*)realloc(Floor, sizeof(*Floor) * FloorLen);
         InitObject(GetNewObj(),20,20,40,5,'#');
             InitObject(GetNewObj(),30,10,5,3,'?');
@@ -353,6 +368,7 @@ int main() {
         }
         ClearMap();
         FallingOfObject(&mario);
+
         PersonCollision();
 
         for(int i = 0; i < FloorLen;i++){
@@ -370,6 +386,7 @@ int main() {
 
         }
         PutObjectOnMap(mario);
+        ShowScore();
         ShowMap();
 
         usleep(25000);
