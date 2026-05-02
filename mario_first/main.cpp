@@ -29,6 +29,7 @@ int maxLevel = 2;
 
 TObject *enemys = NULL;
 int enemysLen;
+const char* MapColor;
 
 void setNonBlocking() {
     struct termios ttystate;
@@ -52,10 +53,9 @@ void ClearMap(){
 }   
 
 void ShowMap() {
-    printf("\033[H\033[J"); // очистка экрана
-
-    // фон и текст 
-    printf("\033[97;44m");
+    printf("\033[H");
+    printf("%s", MapColor);
+    printf("\033[J");
 
     for (int j = 0; j < mapHeight; j++){
         printf("%s\n", map[j]);
@@ -69,6 +69,8 @@ void SetObjectPos(TObject *obj, float xPos, float yPos){
     obj->x = xPos;
     obj->y = yPos;
 }
+void CreateLevel(int lvl);
+
 
 void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeight,char inType){
     SetObjectPos(obj,xPos,yPos);
@@ -78,25 +80,49 @@ void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeigh
     obj->ObType = inType;
     obj->HorSpeed = 0.2;
 }
-bool IsCollision(TObject o1, TObject o2);
-void CreateLevel(int lvl);
 
+
+
+void PlayerDead() {
+    MapColor = "\033[41m"; 
+
+    ClearMap();
+    ShowMap();             
+
+    usleep(500000);       
+
+    CreateLevel(level);  
+}
+bool IsCollision(TObject o1, TObject o2);
+
+TObject *GetNewEn();
 void FallingOfObject(TObject *obj) {
     obj->VertSpeed += 0.05;
     obj->IsFly = true;
     SetObjectPos(obj, obj->x, obj->y + obj->VertSpeed);
     for(int i = 0; i < FloorLen; i++){
         if (IsCollision(*obj,Floor[i])){
+
+
+            if((Floor[i].ObType == '?') && (obj[0].VertSpeed < 0) && (obj == &mario)){
+                Floor[i].ObType = '-';
+                InitObject(GetNewEn(), Floor[i].x, Floor[i].y-3,3,2,'$');
+            }
+
+
+
             obj->y -= obj->VertSpeed;
             obj->VertSpeed = 0;
             obj->IsFly = false;
             if(Floor[i].ObType == '+'){
                 level++;
-
                 if (level > maxLevel){
                     level = 1;
                 }
+                MapColor = "\033[42m";
                 needReload = 1;
+                usleep(1000000);
+
             }
             break;
         }
@@ -106,21 +132,26 @@ void FallingOfObject(TObject *obj) {
 void DeleteObj(int i) {
     enemysLen--;
     enemys[i] = enemys[enemysLen];
-    enemys = (TObject*)realloc(enemys, sizeof(enemys) * enemysLen);
+    enemys = (TObject*)realloc(enemys, sizeof(*enemys) * enemysLen);
 
 }
 
 void PersonCollision(){
     for(int i = 0; i < enemysLen; i++){
         if(IsCollision(mario,enemys[i])){
-            if((mario.IsFly == true) && (mario.VertSpeed > 0) && (mario.y + mario.heigth < enemys[i].y + enemys[i].heigth * 0.5)){
+            if(enemys[i].ObType == '%'){
+                if((mario.IsFly == true) && (mario.VertSpeed > 0) && (mario.y + mario.heigth < enemys[i].y + enemys[i].heigth * 0.5)){
+                    DeleteObj(i);
+                    i--;
+                    continue;
+                } else {
+                    PlayerDead();
+                }
+            } else if(enemys[i].ObType == '$'){
                 DeleteObj(i);
                 i--;
                 continue;
-            } else {
-                CreateLevel(level); 
             }
-
         }
     }
 
@@ -136,12 +167,15 @@ void HorizObjMove(TObject *obj) {
             return;
         }
     }
-    TObject tmp = *obj;
-    FallingOfObject(&tmp);
-    if(tmp.IsFly == true){
-        obj[0].x -= obj[0].HorSpeed;
-        obj[0].HorSpeed *= -1;
+    if(obj[0].ObType == '%'){
+        TObject tmp = *obj;
+        FallingOfObject(&tmp);
+        if(tmp.IsFly == true){
+            obj[0].x -= obj[0].HorSpeed;
+            obj[0].HorSpeed *= -1;
+        }
     }
+    
 }
 
 
@@ -190,30 +224,82 @@ bool IsCollision(TObject o1, TObject o2) {
     (o1.y + o1.heigth > o2.y) && (o1.y < o2.y + o2.heigth));
 }
 
+
+TObject *GetNewObj() {
+    FloorLen++;
+    Floor = (TObject*)realloc(Floor,sizeof(*Floor)*FloorLen);
+    return Floor + FloorLen -1;
+}
+TObject *GetNewEn() {
+    enemysLen++;
+    enemys = (TObject*)realloc(enemys,sizeof(*enemys)*enemysLen);
+    return enemys + enemysLen -1;
+}
+
+
 void CreateLevel(int lvl) {
-    InitObject(&mario,39,10, 3, 3,'$');
-    if (lvl == 2){
-        FloorLen = 4;
+    FloorLen = 0;
+    Floor = (TObject*)realloc(Floor,0);
+    enemysLen = 0;
+    enemys = (TObject*)realloc(enemys,0);
+    InitObject(&mario,39,10, 3, 3,'@');
+    MapColor = "\033[97;44m";
+
+
+    if(lvl == 1){
         Floor = (TObject*)realloc(Floor, sizeof(*Floor) * FloorLen);
-        InitObject(Floor+0,20,20,40,5,'#');
-        InitObject(Floor+1,80,20,15,5,'#');
-        InitObject(Floor+2,120,15,15,10,'#');
-        InitObject(Floor+3,160,10,15,15,'+');
+        InitObject(GetNewObj(),20,20,40,5,'#');
+            InitObject(GetNewObj(),30,10,5,3,'?');
+            InitObject(GetNewObj(),50,10,5,3,'?');
+        InitObject(GetNewObj(),60,15,40,10,'#');
+            InitObject(GetNewObj(),60,5,10,3,'-');
+            InitObject(GetNewObj(),70,5,5,3,'?');
+            InitObject(GetNewObj(),75,5,5,3,'-');
+            InitObject(GetNewObj(),80,5,5,3,'?');
+            InitObject(GetNewObj(),85,5,10,3,'-');
+
+        InitObject(GetNewObj(),100,20,20,5,'#');
+        InitObject(GetNewObj(),120,15,10,10,'#');
+        InitObject(GetNewObj(),150,20,40,5,'#');
+        InitObject(GetNewObj(),210,15,10,10,'+');
+
+        InitObject(GetNewEn(),25,10,3,2,'%');
+        InitObject(GetNewEn(),80,10,3,2,'%');
+        
+    }
+
+    if (lvl == 2){
+        InitObject(GetNewObj(),80,20,15,5,'#');
+        InitObject(GetNewObj(),20,20,40,5,'#');
+        InitObject(GetNewObj(),120,15,15,10,'#');
+        
+        InitObject(GetNewObj(),160,10,15,15,'+');
+
+        InitObject(GetNewEn(),25,10,3,2,'%');
+        InitObject(GetNewEn(),50,10,3,2,'%');
+        InitObject(GetNewEn(),80,10,3,2,'%');
+        InitObject(GetNewEn(),90,10,3,2,'%');
+        InitObject(GetNewEn(),120,10,3,2,'%');
+        InitObject(GetNewEn(),130,10,3,2,'%');
         
 
     }
-    if (lvl == 1){
-        FloorLen = 6;
-        Floor = (TObject*)realloc(Floor, sizeof(TObject) * FloorLen);
-        InitObject(Floor+0,20,20,40,5,'#');
-        InitObject(Floor+1,60,15,10,10,'#');
-        InitObject(Floor+2,80,20,20,5,'#');
-        InitObject(Floor+3,120,15,10,10,'#');
-        InitObject(Floor+4,150,20,40,5,'#');
-        InitObject(Floor+5,210,15,10,10,'+');
-        enemysLen = 1;
-        enemys = (TObject*)realloc(enemys, sizeof(*enemys) * enemysLen);
-        InitObject(enemys+0,25,10,3,2,'%');
+    if (lvl == 3){
+        InitObject(GetNewObj(),20,20,40,5,'#');
+        InitObject(GetNewObj(),60,15,10,10,'#');
+        InitObject(GetNewObj(),80,20,20,5,'#');
+        InitObject(GetNewObj(),120,15,10,10,'#');
+        InitObject(GetNewObj(),150,20,40,5,'#');
+
+        InitObject(GetNewObj(),210,15,10,10,'+');
+
+        InitObject(GetNewEn(),25,10,3,2,'%');
+        InitObject(GetNewEn(),85,10,3,2,'%');
+        InitObject(GetNewEn(),65,10,3,2,'%');
+        InitObject(GetNewEn(),120,10,3,2,'%');
+        InitObject(GetNewEn(),160,10,3,2,'%');
+        InitObject(GetNewEn(),175,10,3,2,'%');
+
     }
 
 }
@@ -251,11 +337,20 @@ int main() {
         if (moveLeft > 0) {
             HorisontalMapMove(2);
         }
-        if (needReload || mario.y > mapHeight) {
-            needReload = 0;
-            CreateLevel(level);
+        if (mario.y > mapHeight) {
+            PlayerDead();
         }
 
+        if (needReload) {
+            needReload = 0;
+
+            MapColor = "\033[42m"; // зелёный (победа)
+            ClearMap();
+            ShowMap();
+            usleep(500000);
+
+            CreateLevel(level);
+        }
         ClearMap();
         FallingOfObject(&mario);
         PersonCollision();
