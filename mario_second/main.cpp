@@ -4,7 +4,7 @@ int main() {
 
     CreateLevel(level);
 
-    setNonBlocking();
+    SetNonBlocking();
 
     char key;
 

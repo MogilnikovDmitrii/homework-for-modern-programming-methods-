@@ -18,20 +18,7 @@ int enemysLen = 0;
 
 const char* MapColor;
 
-void setNonBlocking() {
-
-    struct termios ttystate;
-
-    tcgetattr(STDIN_FILENO, &ttystate);
-
-    ttystate.c_lflag &= ~(ICANON | ECHO);
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
-
-    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
-}
-
-void ClearMap(){
+void ClearMap() {
 
     for (int i = 0; i < mapWidth; i++){
         map[0][i] = ' ';
@@ -39,165 +26,48 @@ void ClearMap(){
 
     map[0][mapWidth] = '\0';
 
-    for ( int j = 1; j < mapHeight; j++){
+    for (int j = 1; j < mapHeight; j++){
         sprintf(map[j], "%s", map[0]);
     }
 }
 
-void ShowMap() {
-
-    printf("\033[H");
-
-    printf("%s", MapColor);
-
-    printf("\033[J");
-
-    for (int j = 0; j < mapHeight; j++){
-        printf("%s\n", map[j]);
-    }
-
-    printf("\033[0m");
-}
-
-void SetObjectPos(TObject *obj, float xPos, float yPos){
-
-    obj->x = xPos;
-    obj->y = yPos;
-}
-
-void InitObject(
-    TObject *obj,
-    float xPos,
-    float yPos,
-    float oWidth,
-    float oHeight,
-    char inType
-){
-
-    SetObjectPos(obj,xPos,yPos);
-
-    obj->width = oWidth;
-    obj->heigth = oHeight;
-
-    obj->VertSpeed = 0;
-
-    obj->ObType = inType;
-
-    obj->HorSpeed = 0.2f;
-}
-
-void PlayerDead() {
-
-    MapColor = "\033[41m";
-
-    ClearMap();
-
-    ShowMap();
-
-    usleep(500000);
-
-    CreateLevel(level);
-}
-
-bool IsCollision(TObject o1, TObject o2) {
-
-    return (
-        (o1.x + o1.width > o2.x) &&
-        (o1.x < o2.x + o2.width) &&
-        (o1.y + o1.heigth > o2.y) &&
-        (o1.y < o2.y + o2.heigth)
-    );
-}
-
-TObject *GetNewObj() {
-
-    FloorLen++;
-
-    TObject* temp = new TObject[FloorLen];
-
-    for(int i = 0; i < FloorLen - 1; i++){
-        temp[i] = Floor[i];
-    }
+void CreateLevel(int lvl) {
 
     delete[] Floor;
-
-    Floor = temp;
-
-    return Floor + FloorLen - 1;
-}
-
-TObject *GetNewEn() {
-
-    enemysLen++;
-
-    TObject* temp = new TObject[enemysLen];
-
-    for(int i = 0; i < enemysLen - 1; i++){
-        temp[i] = enemys[i];
-    }
-
     delete[] enemys;
 
-    enemys = temp;
+    Floor = nullptr;
+    enemys = nullptr;
 
-    return enemys + enemysLen - 1;
-}
+    FloorLen = 0;
+    enemysLen = 0;
 
-void FallingOfObject(TObject *obj) {
+    InitObject(&mario,39,10,3,3,'@');
 
-    obj->VertSpeed += 0.05f;
+    MapColor = "\033[97;44m";
 
-    obj->IsFly = true;
+    if(lvl == 1){
 
-    SetObjectPos(obj, obj->x, obj->y + obj->VertSpeed);
+        score = 0;
 
-    for(int i = 0; i < FloorLen; i++){
+        InitObject(GetNewObj(),20,20,40,5,'#');
+        InitObject(GetNewObj(),30,10,5,3,'?');
+        InitObject(GetNewObj(),50,10,5,3,'?');
+        InitObject(GetNewObj(),60,15,40,10,'#');
 
-        if (IsCollision(*obj,Floor[i])){
+        InitObject(GetNewObj(),60,5,10,3,'-');
+        InitObject(GetNewObj(),70,5,5,3,'?');
+        InitObject(GetNewObj(),75,5,5,3,'-');
+        InitObject(GetNewObj(),80,5,5,3,'?');
+        InitObject(GetNewObj(),85,5,10,3,'-');
 
-            if(
-                (Floor[i].ObType == '?') &&
-                (obj->VertSpeed < 0) &&
-                (obj == &mario)
-            ){
+        InitObject(GetNewObj(),100,20,20,5,'#');
+        InitObject(GetNewObj(),120,15,10,10,'#');
+        InitObject(GetNewObj(),150,20,40,5,'#');
+        InitObject(GetNewObj(),210,15,10,10,'+');
 
-                Floor[i].ObType = '-';
-
-                InitObject(
-                    GetNewEn(),
-                    Floor[i].x,
-                    Floor[i].y - 3,
-                    3,
-                    2,
-                    '$'
-                );
-
-                enemys[enemysLen -1].VertSpeed = -0.3f;
-            }
-
-            obj->y -= obj->VertSpeed;
-
-            obj->VertSpeed = 0;
-
-            obj->IsFly = false;
-
-            if(Floor[i].ObType == '+'){
-
-                level++;
-
-                if (level > maxLevel){
-                    level = 1;
-                }
-
-                MapColor = "\033[42m";
-
-                needReload = 1;
-
-                usleep(1000000);
-            }
-
-            break;
-        }
+        InitObject(GetNewEn(),25,10,3,2,'%');
+        InitObject(GetNewEn(),80,10,3,2,'%');
     }
 }
 
@@ -223,46 +93,72 @@ void DeleteObj(int i) {
     enemys = temp;
 }
 
-void PersonCollision(){
+void FallingOfObject(TObject *obj) {
 
-    for(int i = 0; i < enemysLen; i++){
+    obj->VertSpeed += 0.05f;
+    obj->IsFly = true;
 
-        if(IsCollision(mario,enemys[i])){
+    SetObjectPos(obj, obj->x, obj->y + obj->VertSpeed);
 
-            if(enemys[i].ObType == '%'){
+    for(int i = 0; i < FloorLen; i++){
 
-                if(
-                    (mario.IsFly == true) &&
-                    (mario.VertSpeed > 0) &&
-                    (mario.y + mario.heigth <
-                    enemys[i].y + enemys[i].heigth * 0.5f)
-                ){
+        if (IsCollision(*obj,Floor[i])){
 
-                    DeleteObj(i);
+            if((Floor[i].ObType == '?') &&
+               (obj->VertSpeed < 0) &&
+               (obj == &mario)){
 
-                    i--;
+                Floor[i].ObType = '-';
 
-                    score += 5;
+                InitObject(GetNewEn(),
+                           Floor[i].x,
+                           Floor[i].y - 3,
+                           3,2,'$');
 
-                    continue;
+                enemys[enemysLen -1].VertSpeed = -0.3f;
+            }
 
-                } else {
+            obj->y -= obj->VertSpeed;
+            obj->VertSpeed = 0;
+            obj->IsFly = false;
 
-                    PlayerDead();
+            if(Floor[i].ObType == '+'){
+
+                level++;
+
+                if (level > maxLevel){
+                    level = 1;
                 }
 
-            } else if(enemys[i].ObType == '$'){
+                MapColor = "\033[42m";
+                needReload = 1;
 
-                DeleteObj(i);
-
-                i--;
-
-                score += 10;
-
-                continue;
+                usleep(1000000);
             }
+
+            break;
         }
     }
+}
+
+bool IsCollision(TObject o1, TObject o2) {
+
+    return (
+        (o1.x + o1.width > o2.x) &&
+        (o1.x < o2.x + o2.width) &&
+        (o1.y + o1.heigth > o2.y) &&
+        (o1.y < o2.y + o2.heigth)
+    );
+}
+
+bool IsPosOnMap(int x, int y) {
+
+    return (
+        x >= 0 &&
+        y >= 0 &&
+        x < mapWidth &&
+        y < mapHeight
+    );
 }
 
 void HorizObjMove(TObject *obj) {
@@ -274,9 +170,7 @@ void HorizObjMove(TObject *obj) {
         if (IsCollision(*obj,Floor[i])){
 
             obj->x -= obj->HorSpeed;
-
             obj->HorSpeed *= -1;
-
             return;
         }
     }
@@ -290,42 +184,12 @@ void HorizObjMove(TObject *obj) {
         if(tmp.IsFly == true){
 
             obj->x -= obj->HorSpeed;
-
             obj->HorSpeed *= -1;
         }
     }
 }
 
-bool IsPosOnMap(int x, int y) {
-
-    return (
-        (x >= 0) &&
-        (y >= 0) &&
-        (x < mapWidth) &&
-        (y < mapHeight)
-    );
-}
-
-void PutObjectOnMap(TObject obj){
-
-    int ix = (int)round(obj.x);
-    int iy = (int)round(obj.y);
-
-    int iWidth = (int)round(obj.width);
-    int iHeigth = (int)round(obj.heigth);
-
-    for (int i = ix; i < ix + iWidth; i++){
-
-        for(int j = iy; j < iy + iHeigth;j++){
-
-            if (IsPosOnMap(i,j)){
-                map[j][i] = obj.ObType;
-            }
-        }
-    }
-}
-
-void HorisontalMapMove(float dx){
+void HorisontalMapMove(float dx) {
 
     for(int i = 0; i < FloorLen; i++){
         Floor[i].x += dx;
@@ -352,6 +216,104 @@ void HorisontalMapMove(float dx){
     }
 }
 
+void InitObject(TObject *obj,
+                float xPos,
+                float yPos,
+                float oWidth,
+                float oHeight,
+                char inType) {
+
+    SetObjectPos(obj,xPos,yPos);
+
+    obj->width = oWidth;
+    obj->heigth = oHeight;
+
+    obj->VertSpeed = 0;
+    obj->ObType = inType;
+    obj->HorSpeed = 0.2f;
+}
+
+void PersonCollision() {
+
+    for(int i = 0; i < enemysLen; i++){
+
+        if(IsCollision(mario,enemys[i])){
+
+            if(enemys[i].ObType == '%'){
+
+                if(mario.IsFly &&
+                   mario.VertSpeed > 0 &&
+                   mario.y + mario.heigth <
+                   enemys[i].y + enemys[i].heigth * 0.5f){
+
+                    DeleteObj(i);
+                    i--;
+                    score += 5;
+                    continue;
+
+                } else {
+                    PlayerDead();
+                }
+
+            } else if(enemys[i].ObType == '$'){
+
+                DeleteObj(i);
+                i--;
+                score += 10;
+                continue;
+            }
+        }
+    }
+}
+
+void PlayerDead() {
+
+    MapColor = "\033[41m";
+
+    ClearMap();
+    ShowMap();
+
+    usleep(500000);
+
+    CreateLevel(level);
+}
+
+void PutObjectOnMap(TObject obj) {
+
+    int ix = (int)round(obj.x);
+    int iy = (int)round(obj.y);
+
+    int iWidth = (int)round(obj.width);
+    int iHeigth = (int)round(obj.heigth);
+
+    for (int i = ix; i < ix + iWidth; i++){
+        for(int j = iy; j < iy + iHeigth;j++){
+            if (IsPosOnMap(i,j)){
+                map[j][i] = obj.ObType;
+            }
+        }
+    }
+}
+
+void SetObjectPos(TObject *obj, float xPos, float yPos) {
+
+    obj->x = xPos;
+    obj->y = yPos;
+}
+
+void ShowMap() {
+
+    printf("\033[H");
+    printf("%s", MapColor);
+    printf("\033[J");
+
+    for (int j = 0; j < mapHeight; j++){
+        printf("%s\n", map[j]);
+    }
+
+    printf("\033[0m");
+}
+
 void ShowScore() {
 
     char c[30];
@@ -365,53 +327,13 @@ void ShowScore() {
     }
 }
 
-void CreateLevel(int lvl) {
+void SetNonBlocking() {
 
-    delete[] Floor;
-    delete[] enemys;
+    struct termios ttystate;
 
-    Floor = nullptr;
-    enemys = nullptr;
+    tcgetattr(STDIN_FILENO, &ttystate);
+    ttystate.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 
-    FloorLen = 0;
-    enemysLen = 0;
-
-    InitObject(&mario,39,10, 3, 3,'@');
-
-    MapColor = "\033[97;44m";
-
-    if(lvl == 1){
-
-        score = 0;
-
-        InitObject(GetNewObj(),20,20,40,5,'#');
-
-        InitObject(GetNewObj(),30,10,5,3,'?');
-
-        InitObject(GetNewObj(),50,10,5,3,'?');
-
-        InitObject(GetNewObj(),60,15,40,10,'#');
-
-        InitObject(GetNewObj(),60,5,10,3,'-');
-
-        InitObject(GetNewObj(),70,5,5,3,'?');
-
-        InitObject(GetNewObj(),75,5,5,3,'-');
-
-        InitObject(GetNewObj(),80,5,5,3,'?');
-
-        InitObject(GetNewObj(),85,5,10,3,'-');
-
-        InitObject(GetNewObj(),100,20,20,5,'#');
-
-        InitObject(GetNewObj(),120,15,10,10,'#');
-
-        InitObject(GetNewObj(),150,20,40,5,'#');
-
-        InitObject(GetNewObj(),210,15,10,10,'+');
-
-        InitObject(GetNewEn(),25,10,3,2,'%');
-
-        InitObject(GetNewEn(),80,10,3,2,'%');
-    }
+    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 }

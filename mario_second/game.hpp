@@ -1,14 +1,14 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include <algorithm>
+#include <fcntl.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <unistd.h>
-#include <termios.h>
-#include <fcntl.h>
 #include <string.h>
-#include <algorithm>
+#include <termios.h>
+#include <unistd.h>
 
 #define mapWidth 80
 #define mapHeight 25
@@ -44,15 +44,17 @@ extern int enemysLen;
 
 extern const char* MapColor;
 
-void setNonBlocking();
-
 void ClearMap();
-
-void ShowMap();
-
-void SetObjectPos(TObject *obj, float xPos, float yPos);
-
 void CreateLevel(int lvl);
+
+void DeleteObj(int i);
+void FallingOfObject(TObject *obj);
+
+TObject *GetNewEn();
+TObject *GetNewObj();
+
+void HorizObjMove(TObject *obj);
+void HorisontalMapMove(float dx);
 
 void InitObject(
     TObject *obj,
@@ -63,28 +65,15 @@ void InitObject(
     char inType
 );
 
-void PlayerDead();
-
 bool IsCollision(TObject o1, TObject o2);
-
-TObject *GetNewEn();
-
-void FallingOfObject(TObject *obj);
-
-void DeleteObj(int i);
-
+bool IsPosOnMap(int x, int y);
 void PersonCollision();
 
-void HorizObjMove(TObject *obj);
-
-bool IsPosOnMap(int x, int y);
-
+void PlayerDead();
 void PutObjectOnMap(TObject obj);
+void SetObjectPos(TObject *obj, float xPos, float yPos);
+void SetNonBlocking();
 
-void HorisontalMapMove(float dx);
-
-TObject *GetNewObj();
-
+void ShowMap();
 void ShowScore();
-
 #endif
