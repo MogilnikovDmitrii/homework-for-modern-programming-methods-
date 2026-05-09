@@ -20,7 +20,7 @@ const char* MapColor;
 
 /*system*/
 
-void setNonBlocking() {
+void SetNonBlocking() {
 
     struct termios ttystate;
 
