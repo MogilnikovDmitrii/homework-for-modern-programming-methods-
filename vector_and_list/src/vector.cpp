@@ -14,6 +14,9 @@ Vector<T>::Vector() {
 template<typename T>
 Vector<T>::~Vector() {
 	delete[] arr;
+	arr = nullptr;
+	capacity = 0;
+	size = 0;
 }
 
 template<typename T>
@@ -53,7 +56,25 @@ bool Vector<T>::insert(const std::size_t position, const T& value) {
 		return false;
 	}
 
-	check_capacity();
+	if(size == capacity){
+		capacity *= 2;
+		T* new_arr = new T[capacity];
+
+		for (std::size_t i = 0; i < position; i++) {
+			new_arr[i] = arr[i];
+		}
+
+		new_arr[position] = value;
+
+		for(std::size_t i = position;i < size;i++){
+			new_arr[i+1] = arr[i];
+		}
+
+		delete[] arr;
+		arr = new_arr;
+		size++;
+		return true;
+	}
 
 	for(std::size_t i = size; i > position;i--){
 		arr[i] = arr[i-1];
@@ -61,6 +82,7 @@ bool Vector<T>::insert(const std::size_t position, const T& value) {
 	arr[position] = value;
 	size++;
 	return true;
+	
 }
 
 template<typename T>
@@ -87,6 +109,16 @@ bool DmMog::Vector<T>::remove_first(const T& value) {
                 arr[j] = arr[j + 1];
             }
             size--;
+			if(capacity / size >= 4){
+				capacity /= 2;
+				T* new_arr = new T[capacity];
+				for (std::size_t i = 0; i < size; i++) {
+					new_arr[i] = arr[i];
+				}
+
+				delete[] arr;
+				arr = new_arr;
+			}
             return true;
         }
     }
@@ -95,11 +127,9 @@ bool DmMog::Vector<T>::remove_first(const T& value) {
 
 template<typename T>
 void DmMog::Vector<T>::remove(const std::size_t position) {
-
 	if (position >= size) {
         return;
     }
-
     for (std::size_t j = position; j + 1 < size; j++) {
         arr[j] = arr[j + 1];
     }

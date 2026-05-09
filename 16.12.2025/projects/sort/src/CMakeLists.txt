@@ -1,8 +1,10 @@
-add_library(sort_lib
-    bubble_sort.cpp
-)
+target_sources(${LIB_NAME}
+    PRIVATE 
+        bubble_sort.cpp
+    PUBLIC 
+        bubble_sort.hpp
 
-target_include_directories(sort_lib PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
+target_include_directories(${LIB_NAME} PUBLIC
+    "${PROJECT_SOURCE_DIR}/src"
+)

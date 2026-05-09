@@ -48,7 +48,6 @@ TEST(VectorTest, RemoveFirst) {
     EXPECT_FALSE(v.remove_first(99));
 }
 
-// Тестируем has_item
 TEST(VectorTest, HasItem) {
     Vector<int> v;
     v.push_back(5);

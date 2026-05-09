@@ -94,5 +94,4 @@ bool DoublyLinkedList<T>::remove_first(const T& value) noexcept {
 
 
 
-// Явная инстанциация для int (можно убрать или добавить другие типы)
 template class DoublyLinkedList<int>;

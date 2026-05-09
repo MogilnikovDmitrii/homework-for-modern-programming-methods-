@@ -1,2 +1,5 @@
 refactoring/resources/books.txt
 bin/
+build_ninja/
+
+.vscode/
