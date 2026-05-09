@@ -17,63 +17,84 @@ struct TObject{
     float x,y;
     float width,heigth;
 
+    float HorSpeed;
     float VertSpeed;
 
     bool IsFly;
 
     char ObType;
-
-    float HorSpeed;
 };
 
-extern char map[mapHeight][mapWidth+1];
-
-extern TObject mario;
-
-extern TObject* Floor;
-extern int FloorLen;
-
-extern int level;
-extern int score;
-
-extern int needReload;
-extern int maxLevel;
 
 extern TObject* enemys;
 extern int enemysLen;
 
+extern TObject* Floor;
+extern int FloorLen;
+
+extern TObject mario;
+
+extern char map[mapHeight][mapWidth+1];
+
 extern const char* MapColor;
 
-void ClearMap();
+extern int level;
+
+extern int maxLevel;
+
+extern int needReload;
+
+extern int score;
+
+/* initialisation*/
+
 void CreateLevel(int lvl);
-
-void DeleteObj(int i);
-void FallingOfObject(TObject *obj);
-
-TObject *GetNewEn();
-TObject *GetNewObj();
-
-void HorizObjMove(TObject *obj);
-void HorisontalMapMove(float dx);
 
 void InitObject(
     TObject *obj,
     float xPos,
     float yPos,
-    float oWidth,
-    float oHeight,
-    char inType
+    float w,
+    float h,
+    char type
 );
 
-bool IsCollision(TObject o1, TObject o2);
-bool IsPosOnMap(int x, int y);
-void PersonCollision();
+TObject* GetNewObj();
+TObject* GetNewEn();
 
-void PlayerDead();
-void PutObjectOnMap(TObject obj);
-void SetObjectPos(TObject *obj, float xPos, float yPos);
-void SetNonBlocking();
+void SetObjectPos(TObject *obj, float x, float y);
+
+/*map render*/
+void ClearMap();
+
+bool IsPosOnMap(int x, int y);
+
 
 void ShowMap();
+
+void PutObjectOnMap(TObject obj);
+
+
+/*physics*/
+void FallingOfObject(TObject *obj);
+
+void HorizObjMove(TObject *obj);
+
+void HorisontalMapMove(float dx);
+
+/*collision*/
+bool IsCollision(TObject o1, TObject o2);
+
+void PersonCollision();
+/* game logic*/
+void DeleteObj(int i);
+
+void PlayerDead();
+
+
 void ShowScore();
+
+/*system*/
+void SetNonBlocking();
+
 #endif
