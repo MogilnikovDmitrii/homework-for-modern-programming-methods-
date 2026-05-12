@@ -1,20 +1,7 @@
 #include "game.hpp"
-
-char map[mapHeight][mapWidth+1];
-TObject mario;
-TObject* Floor = nullptr;
-int FloorLen = 0;
-int level = 1;
-int score = 0;
-int needReload = 0;
-int maxLevel = 2;
-TObject* enemys = nullptr;
-int enemysLen = 0;
-const char* MapColor = "\033[97;44m";
-
 /* ========== initialisation ========== */
 
-TObject* GetNewObj() {
+TObject* getNewObj(TObject*& Floor, int& FloorLen) {
     FloorLen++;
     TObject* temp = new TObject[FloorLen];
     for (int i = 0; i < FloorLen - 1; i++) temp[i] = Floor[i];
@@ -23,7 +10,7 @@ TObject* GetNewObj() {
     return Floor + FloorLen - 1;
 }
 
-TObject* GetNewEn() {
+TObject* getNewEn(TObject*& enemys, int& enemysLen) {
     enemysLen++;
     TObject* temp = new TObject[enemysLen];
     for (int i = 0; i < enemysLen - 1; i++) temp[i] = enemys[i];
@@ -32,7 +19,7 @@ TObject* GetNewEn() {
     return enemys + enemysLen - 1;
 }
 
-void InitObject(TObject* obj, float xPos, float yPos, float w, float h, char type) {
+void initObject(TObject* obj, float xPos, float yPos, float w, float h, char type) {
     obj->x = xPos;
     obj->y = yPos;
     obj->width = w;
@@ -43,12 +30,14 @@ void InitObject(TObject* obj, float xPos, float yPos, float w, float h, char typ
     obj->HorSpeed = 0.2f;
 }
 
-void SetObjectPos(TObject* obj, float x, float y) {
+void setObjectPos(TObject* obj, float x, float y) {
     obj->x = x;
     obj->y = y;
 }
 
-void CreateLevel(int lvl) {
+void createLevel(int lvl, TObject& mario, TObject*& Floor, int& FloorLen,
+                 TObject*& enemys, int& enemysLen, int& score,
+                 const char** MapColor) {
     delete[] Floor;
     delete[] enemys;
     Floor = nullptr;
@@ -56,82 +45,82 @@ void CreateLevel(int lvl) {
     FloorLen = 0;
     enemysLen = 0;
 
-    InitObject(&mario, 39, 10, 3, 3, '@');
-    MapColor = "\033[97;44m";
+    initObject(&mario, 39, 10, 3, 3, '@');
+    *MapColor = "\033[97;44m";
 
     if (lvl == 1) {
         score = 0;
-        InitObject(GetNewObj(), 20, 20, 40, 5, '#');
-        InitObject(GetNewObj(), 30, 10, 5, 3, '?');
-        InitObject(GetNewObj(), 50, 10, 5, 3, '?');
-        InitObject(GetNewObj(), 60, 15, 40, 10, '#');
-        InitObject(GetNewObj(), 60, 5, 10, 3, '-');
-        InitObject(GetNewObj(), 70, 5, 5, 3, '?');
-        InitObject(GetNewObj(), 75, 5, 5, 3, '-');
-        InitObject(GetNewObj(), 80, 5, 5, 3, '?');
-        InitObject(GetNewObj(), 85, 5, 10, 3, '-');
-        InitObject(GetNewObj(), 100, 20, 20, 5, '#');
-        InitObject(GetNewObj(), 120, 15, 10, 10, '#');
-        InitObject(GetNewObj(), 150, 20, 40, 5, '#');
-        InitObject(GetNewObj(), 210, 15, 10, 10, '+');
-        InitObject(GetNewEn(), 25, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 80, 10, 3, 2, '%');
+        initObject(getNewObj(Floor, FloorLen), 20, 20, 40, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 30, 10, 5, 3, '?');
+        initObject(getNewObj(Floor, FloorLen), 50, 10, 5, 3, '?');
+        initObject(getNewObj(Floor, FloorLen), 60, 15, 40, 10, '#');
+        initObject(getNewObj(Floor, FloorLen), 60, 5, 10, 3, '-');
+        initObject(getNewObj(Floor, FloorLen), 70, 5, 5, 3, '?');
+        initObject(getNewObj(Floor, FloorLen), 75, 5, 5, 3, '-');
+        initObject(getNewObj(Floor, FloorLen), 80, 5, 5, 3, '?');
+        initObject(getNewObj(Floor, FloorLen), 85, 5, 10, 3, '-');
+        initObject(getNewObj(Floor, FloorLen), 100, 20, 20, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 120, 15, 10, 10, '#');
+        initObject(getNewObj(Floor, FloorLen), 150, 20, 40, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 210, 15, 10, 10, '+');
+        initObject(getNewEn(enemys, enemysLen), 25, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 80, 10, 3, 2, '%');
     }
 
     if (lvl == 2) {
-        InitObject(GetNewObj(), 80, 20, 15, 5, '#');
-        InitObject(GetNewObj(), 20, 20, 40, 5, '#');
-        InitObject(GetNewObj(), 120, 15, 15, 10, '#');
-        InitObject(GetNewObj(), 160, 10, 15, 15, '+');
-        InitObject(GetNewEn(), 25, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 50, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 80, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 90, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 120, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 130, 10, 3, 2, '%');
+        initObject(getNewObj(Floor, FloorLen), 80, 20, 15, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 20, 20, 40, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 120, 15, 15, 10, '#');
+        initObject(getNewObj(Floor, FloorLen), 160, 10, 15, 15, '+');
+        initObject(getNewEn(enemys, enemysLen), 25, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 50, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 80, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 90, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 120, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 130, 10, 3, 2, '%');
     }
 
     if (lvl == 3) {
-        InitObject(GetNewObj(), 20, 20, 40, 5, '#');
-        InitObject(GetNewObj(), 60, 15, 10, 10, '#');
-        InitObject(GetNewObj(), 80, 20, 20, 5, '#');
-        InitObject(GetNewObj(), 120, 15, 10, 10, '#');
-        InitObject(GetNewObj(), 150, 20, 40, 5, '#');
-        InitObject(GetNewObj(), 210, 15, 10, 10, '+');
-        InitObject(GetNewEn(), 25, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 85, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 65, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 120, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 160, 10, 3, 2, '%');
-        InitObject(GetNewEn(), 175, 10, 3, 2, '%');
+        initObject(getNewObj(Floor, FloorLen), 20, 20, 40, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 60, 15, 10, 10, '#');
+        initObject(getNewObj(Floor, FloorLen), 80, 20, 20, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 120, 15, 10, 10, '#');
+        initObject(getNewObj(Floor, FloorLen), 150, 20, 40, 5, '#');
+        initObject(getNewObj(Floor, FloorLen), 210, 15, 10, 10, '+');
+        initObject(getNewEn(enemys, enemysLen), 25, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 85, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 65, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 120, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 160, 10, 3, 2, '%');
+        initObject(getNewEn(enemys, enemysLen), 175, 10, 3, 2, '%');
     }
 }
 
 /* ========== map render ========== */
 
-void ClearMap() {
+void clearMap(char map[mapHeight][mapWidth+1]) {
     for (int i = 0; i < mapWidth; i++) map[0][i] = ' ';
     map[0][mapWidth] = '\0';
     for (int j = 1; j < mapHeight; j++) sprintf(map[j], "%s", map[0]);
 }
 
-bool IsPosOnMap(int x, int y) {
+bool isPosOnMap(int x, int y) {
     return x >= 0 && y >= 0 && x < mapWidth && y < mapHeight;
 }
 
-void PutObjectOnMap(TObject obj) {
+void putObjectOnMap(TObject obj, char map[mapHeight][mapWidth+1]) {
     int ix = (int)round(obj.x);
     int iy = (int)round(obj.y);
     int iw = (int)round(obj.width);
     int ih = (int)round(obj.heigth);
     for (int i = ix; i < ix + iw; i++) {
         for (int j = iy; j < iy + ih; j++) {
-            if (IsPosOnMap(i, j)) map[j][i] = obj.ObType;
+            if (isPosOnMap(i, j)) map[j][i] = obj.ObType;
         }
     }
 }
 
-void ShowMap() {
+void showMap(char map[mapHeight][mapWidth+1], const char* MapColor) {
     printf("\033[H");
     printf("%s", MapColor);
     printf("\033[J");
@@ -139,7 +128,7 @@ void ShowMap() {
     printf("\033[0m");
 }
 
-void ShowScore() {
+void showScore(char map[mapHeight][mapWidth+1], int score) {
     char buf[30];
     sprintf(buf, "Score: %d", score);
     int len = strlen(buf);
@@ -148,16 +137,19 @@ void ShowScore() {
 
 /* ========== physics ========== */
 
-void FallingOfObject(TObject *obj) {
+void fallingOfObject(TObject *obj, TObject* Floor, int FloorLen,
+                     TObject*& enemys, int& enemysLen, TObject* mario,
+                     int& level, int maxLevel, int& needReload,
+                     const char** MapColor) {
     obj->VertSpeed += 0.05f;
     obj->IsFly = true;
     obj->y += obj->VertSpeed;
     for (int i = 0; i < FloorLen; i++) {
-        if (IsCollision(*obj, Floor[i])) {
-            if (Floor[i].ObType == '?' && obj->VertSpeed < 0 && obj == &mario) {
+        if (isCollision(*obj, Floor[i])) {
+            if (Floor[i].ObType == '?' && obj->VertSpeed < 0 && obj == mario) {
                 Floor[i].ObType = '-';
-                TObject* newEn = GetNewEn();
-                InitObject(newEn, Floor[i].x, Floor[i].y - 3, 3, 2, '$');
+                TObject* newEn = getNewEn(enemys, enemysLen);
+                initObject(newEn, Floor[i].x, Floor[i].y - 3, 3, 2, '$');
                 newEn->VertSpeed = -0.3f;
             }
             obj->y -= obj->VertSpeed;
@@ -166,7 +158,7 @@ void FallingOfObject(TObject *obj) {
             if (Floor[i].ObType == '+') {
                 level++;
                 if (level > maxLevel) level = 1;
-                MapColor = "\033[42m";
+                *MapColor = "\033[42m";
                 needReload = 1;
                 usleep(1000000);
             }
@@ -175,10 +167,13 @@ void FallingOfObject(TObject *obj) {
     }
 }
 
-void HorizObjMove(TObject *obj) {
+void horizObjMove(TObject *obj, TObject* Floor, int FloorLen,
+                  TObject*& enemys, int& enemysLen, TObject* mario,
+                  int& level, int maxLevel, int& needReload,
+                  const char** MapColor) {
     obj->x += obj->HorSpeed;
     for (int i = 0; i < FloorLen; i++) {
-        if (IsCollision(*obj, Floor[i])) {
+        if (isCollision(*obj, Floor[i])) {
             obj->x -= obj->HorSpeed;
             obj->HorSpeed *= -1;
             return;
@@ -186,7 +181,8 @@ void HorizObjMove(TObject *obj) {
     }
     if (obj->ObType == '%') {
         TObject tmp = *obj;
-        FallingOfObject(&tmp);
+        fallingOfObject(&tmp, Floor, FloorLen, enemys, enemysLen, mario,
+                        level, maxLevel, needReload, MapColor);
         if (tmp.IsFly) {
             obj->x -= obj->HorSpeed;
             obj->HorSpeed *= -1;
@@ -194,11 +190,12 @@ void HorizObjMove(TObject *obj) {
     }
 }
 
-void HorisontalMapMove(float dx) {
+void horisontalMapMove(float dx, TObject* Floor, int FloorLen,
+                       TObject* enemys, int enemysLen, TObject* mario) {
     for (int i = 0; i < FloorLen; i++) Floor[i].x += dx;
     for (int i = 0; i < enemysLen; i++) enemys[i].x += dx;
     for (int i = 0; i < FloorLen; i++) {
-        if (IsCollision(mario, Floor[i])) {
+        if (isCollision(*mario, Floor[i])) {
             for (int j = 0; j < FloorLen; j++) Floor[j].x -= dx;
             for (int j = 0; j < enemysLen; j++) enemys[j].x -= dx;
             return;
@@ -208,28 +205,32 @@ void HorisontalMapMove(float dx) {
 
 /* ========== collision ========== */
 
-bool IsCollision(TObject o1, TObject o2) {
+bool isCollision(TObject o1, TObject o2) {
     return (o1.x + o1.width > o2.x) &&
            (o1.x < o2.x + o2.width) &&
            (o1.y + o1.heigth > o2.y) &&
            (o1.y < o2.y + o2.heigth);
 }
 
-void PersonCollision() {
+void personCollision(TObject* mario, TObject*& enemys, int& enemysLen,
+                     int& score, TObject*& Floor, int& FloorLen,
+                     int level, const char** MapColor,
+                     char map[mapHeight][mapWidth+1]) {
     for (int i = 0; i < enemysLen; i++) {
-        if (IsCollision(mario, enemys[i])) {
+        if (isCollision(*mario, enemys[i])) {
             if (enemys[i].ObType == '%') {
-                if (mario.IsFly && mario.VertSpeed > 0 &&
-                    mario.y + mario.heigth < enemys[i].y + enemys[i].heigth * 0.5f) {
-                    DeleteObj(i);
+                if (mario->IsFly && mario->VertSpeed > 0 &&
+                    mario->y + mario->heigth < enemys[i].y + enemys[i].heigth * 0.5f) {
+                    deleteObj(i, enemys, enemysLen);
                     i--;
                     score += 5;
                     continue;
                 } else {
-                    PlayerDead();
+                    playerDead(*mario, Floor, FloorLen, enemys, enemysLen,
+                               level, score, MapColor, map);
                 }
             } else if (enemys[i].ObType == '$') {
-                DeleteObj(i);
+                deleteObj(i, enemys, enemysLen);
                 i--;
                 score += 10;
             }
@@ -239,7 +240,7 @@ void PersonCollision() {
 
 /* ========== game logic ========== */
 
-void DeleteObj(int i) {
+void deleteObj(int i, TObject*& enemys, int& enemysLen) {
     enemysLen--;
     enemys[i] = enemys[enemysLen];
     TObject* temp = nullptr;
@@ -251,17 +252,19 @@ void DeleteObj(int i) {
     enemys = temp;
 }
 
-void PlayerDead() {
-    MapColor = "\033[41m";
-    ClearMap();
-    ShowMap();
+void playerDead(TObject& mario, TObject*& Floor, int& FloorLen,
+                TObject*& enemys, int& enemysLen, int level, int& score,
+                const char** MapColor, char map[mapHeight][mapWidth+1]) {
+    *MapColor = "\033[41m";
+    clearMap(map);
+    showMap(map, *MapColor);
     usleep(500000);
-    CreateLevel(level);
+    createLevel(level, mario, Floor, FloorLen, enemys, enemysLen, score, MapColor);
 }
 
 /* ========== system ========== */
 
-void SetNonBlocking() {
+void setNonBlocking() {
     struct termios ttystate;
     tcgetattr(STDIN_FILENO, &ttystate);
     ttystate.c_lflag &= ~(ICANON | ECHO);

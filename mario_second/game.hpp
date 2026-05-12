@@ -1,3 +1,4 @@
+
 #ifndef GAME_HPP
 #define GAME_HPP
 
@@ -16,85 +17,59 @@
 struct TObject{
     float x,y;
     float width,heigth;
-
     float HorSpeed;
     float VertSpeed;
-
     bool IsFly;
-
     char ObType;
 };
 
+void createLevel(int lvl, TObject& mario, TObject*& Floor, int& FloorLen,
+                 TObject*& enemys, int& enemysLen, int& score,
+                 const char** MapColor);
 
-extern TObject* enemys;
-extern int enemysLen;
+void initObject(TObject *obj, float xPos, float yPos, float w, float h, char type);
 
-extern TObject* Floor;
-extern int FloorLen;
+TObject* getNewObj(TObject*& Floor, int& FloorLen);
+TObject* getNewEn(TObject*& enemys, int& enemysLen);
 
-extern TObject mario;
+void setObjectPos(TObject *obj, float x, float y);
 
-extern char map[mapHeight][mapWidth+1];
+void clearMap(char map[mapHeight][mapWidth+1]);
 
-extern const char* MapColor;
+bool isPosOnMap(int x, int y);
 
-extern int level;
+void showMap(char map[mapHeight][mapWidth+1], const char* MapColor);
 
-extern int maxLevel;
+void putObjectOnMap(TObject obj, char map[mapHeight][mapWidth+1]);
 
-extern int needReload;
+void fallingOfObject(TObject *obj, TObject* Floor, int FloorLen,
+                     TObject*& enemys, int& enemysLen, TObject* mario,
+                     int& level, int maxLevel, int& needReload,
+                     const char** MapColor);
 
-extern int score;
+void horizObjMove(TObject *obj, TObject* Floor, int FloorLen,
+                  TObject*& enemys, int& enemysLen, TObject* mario,
+                  int& level, int maxLevel, int& needReload,
+                  const char** MapColor);
 
-/* initialisation*/
+void horisontalMapMove(float dx, TObject* Floor, int FloorLen,
+                       TObject* enemys, int enemysLen, TObject* mario);
 
-void CreateLevel(int lvl);
+bool isCollision(TObject o1, TObject o2);
 
-void InitObject(
-    TObject *obj,
-    float xPos,
-    float yPos,
-    float w,
-    float h,
-    char type
-);
+void personCollision(TObject* mario, TObject*& enemys, int& enemysLen,
+                     int& score, TObject*& Floor, int& FloorLen,
+                     int level, const char** MapColor,
+                     char map[mapHeight][mapWidth+1]);
 
-TObject* GetNewObj();
-TObject* GetNewEn();
+void deleteObj(int i, TObject*& enemys, int& enemysLen);
 
-void SetObjectPos(TObject *obj, float x, float y);
+void playerDead(TObject& mario, TObject*& Floor, int& FloorLen,
+                TObject*& enemys, int& enemysLen, int level, int& score,
+                const char** MapColor, char map[mapHeight][mapWidth+1]);
 
-/*map render*/
-void ClearMap();
+void showScore(char map[mapHeight][mapWidth+1], int score);
 
-bool IsPosOnMap(int x, int y);
-
-
-void ShowMap();
-
-void PutObjectOnMap(TObject obj);
-
-
-/*physics*/
-void FallingOfObject(TObject *obj);
-
-void HorizObjMove(TObject *obj);
-
-void HorisontalMapMove(float dx);
-
-/*collision*/
-bool IsCollision(TObject o1, TObject o2);
-
-void PersonCollision();
-/* game logic*/
-void DeleteObj(int i);
-
-void PlayerDead();
-
-
-void ShowScore();
-
-/*system*/
-void SetNonBlocking();
+void setNonBlocking();
 
 #endif
