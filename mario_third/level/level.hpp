@@ -1,7 +1,14 @@
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 
-#include "objects.hpp"
+#include "coin.hpp"
+#include "enemy.hpp"
+#include "gameObject.hpp"
+#include "movableObject.hpp"
+#include "platform.hpp"
+#include "player.hpp"
+#include "stableObject.hpp"
+
 
 class Level {
 private:
@@ -19,13 +26,13 @@ public:
 
     void addFloor(GameObject* obj);
     void addEnemy(GameObject* obj);
-    void removeEnemy(int index);
 
     GameObject** getFloor();
     GameObject** getEnemies();
 
     int getFloorLen() const;
     int getEnemiesLen() const;
+    void removeEnemy(int index);
 };
 
 #endif

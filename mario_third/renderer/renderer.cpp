@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 /* ========== constructor ========== */
-Renderer::Renderer() : currentColor("\033[97;44m")   // синий фон, белый текст
+Renderer::Renderer() : currentColor("\033[97;44m")  
 {
     clear();
 }

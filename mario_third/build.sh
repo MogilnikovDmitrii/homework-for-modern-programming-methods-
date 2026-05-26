@@ -3,11 +3,9 @@
 CXX=g++
 CXXFLAGS="-Wall -Wextra -pedantic -std=c++17"
 
-# Пути к заголовочным файлам (папки)
 INCLUDES="-I. -Ilevel -Iobjects -Irenderer"
 
-# Исходные файлы (без game.cpp/game.hpp)
-SOURCES="main.cpp engine/engine.cpp level/level.cpp objects/objects.cpp renderer/renderer.cpp"
+SOURCES="main.cpp engine/engine.cpp level/level.cpp objects/gameObject.cpp renderer/renderer.cpp objects/coin.cpp objects/enemy.cpp objects/movableObject.cpp objects/platform.cpp objects/player.cpp objects/stableObject.cpp"
 
 OUTPUT="game"
 

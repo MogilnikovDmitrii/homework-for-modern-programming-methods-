@@ -28,7 +28,7 @@ void GameEngine::handleInput() {
         if (key == 27) running = false;
         if (key == ' ' && !player.getIsFly()) {
             player.setVertSpeed(-1.3f);
-            player.setIsFly(true);   // важно!
+            player.setIsFly(true);  
         }
         if (key == 'a') moveLeft = 1;
         if (key == 'd') moveRight = 1;
@@ -38,20 +38,16 @@ void GameEngine::handleInput() {
 }
 
 void GameEngine::moveCamera(float dx) {
-    // Сдвигаем все платформы
     for (int i = 0; i < level.getFloorLen(); ++i) {
         GameObject* obj = level.getFloor()[i];
         obj->setPos(obj->getX() + dx, obj->getY());
     }
-    // Сдвигаем всех врагов
     for (int i = 0; i < level.getEnemiesLen(); ++i) {
         GameObject* obj = level.getEnemies()[i];
         obj->setPos(obj->getX() + dx, obj->getY());
     }
-    // Проверяем, не столкнулся ли игрок с платформой после сдвига
     for (int i = 0; i < level.getFloorLen(); ++i) {
         if (player.isCollision(*level.getFloor()[i])) {
-            // Откат: сдвигаем всё обратно
             for (int j = 0; j < level.getFloorLen(); ++j) {
                 level.getFloor()[j]->setPos(level.getFloor()[j]->getX() - dx, level.getFloor()[j]->getY());
             }
@@ -86,11 +82,9 @@ void GameEngine::applyGravityAndMove(MovableObject& obj) {
         }
     }
 
-    // Гравитация
     obj.setVertSpeed(obj.getVertSpeed() + 0.05f);
     obj.setPos(obj.getX(), obj.getY() + obj.getVertSpeed());
 
-    // Коллизии с блоками
     for (int i = 0; i < level.getFloorLen(); ++i) {
         GameObject* floorObj = level.getFloor()[i];
 
@@ -99,7 +93,6 @@ void GameEngine::applyGravityAndMove(MovableObject& obj) {
 
         bool specialQuestion = false;
 
-        // --- SPECIAL: блок '?' ---
         if (floorObj->getType() == SYM_QUESTION &&
             obj.getVertSpeed() < 0 &&
             &obj == &player)
@@ -124,7 +117,6 @@ void GameEngine::applyGravityAndMove(MovableObject& obj) {
         if (specialQuestion)
             break;
 
-        // --- обычные коллизии ---
         if (obj.getVertSpeed() > 0) {
             obj.setPos(obj.getX(), floorObj->getY() - obj.getHeight());
             obj.setVertSpeed(0);
@@ -135,7 +127,6 @@ void GameEngine::applyGravityAndMove(MovableObject& obj) {
             obj.setVertSpeed(0);
         }
 
-        // портал
         if (floorObj->getType() == SYM_PORTAL) {
             currentLevel++;
             if (currentLevel > maxLevel)

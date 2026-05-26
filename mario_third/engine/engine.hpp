@@ -3,7 +3,13 @@
 
 #include "level.hpp"
 #include "renderer.hpp"
-#include "objects.hpp"
+#include "coin.hpp"
+#include "enemy.hpp"
+#include "gameObject.hpp"
+#include "movableObject.hpp"
+#include "platform.hpp"
+#include "player.hpp"
+#include "stableObject.hpp"
 
 class GameEngine {
 private:

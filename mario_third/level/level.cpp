@@ -1,6 +1,6 @@
 #include "level.hpp"
 #include "constants.hpp"
-#include <cstring> // для memcpy
+#include <cstring> 
 
 /* ========== Level ========== */
 
