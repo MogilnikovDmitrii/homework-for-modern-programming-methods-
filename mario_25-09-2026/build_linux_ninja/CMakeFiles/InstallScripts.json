@@ -1,0 +1,18 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/os_controls/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/os_controls/os_api/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/os_controls/linux/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/controller/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/levels/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/model/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/objects/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/ui/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/ui/console/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/ui/console/ui_objects/cmake_install.cmake",
+		"/home/rakal/Documents/MPM/homework-for-modern-programming-methods-/mario_25-09-2026/build_linux_ninja/util/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
