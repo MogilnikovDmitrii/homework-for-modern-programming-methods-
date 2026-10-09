@@ -47,8 +47,9 @@ void Game::check_horizontally_static_collisions() noexcept {
 void Game::check_mario_collision() {
 	for (int i = 0; i < collisionable_objs.size(); i++) {
 		Collisionable* obj = collisionable_objs[i];
-		if (obj->has_collision(mario)) {
+		if (obj != mario && obj->is_active() && obj->has_collision(mario)) {
 			obj->process_mario_collision(mario);
+			mario->process_mario_collision(obj);
 			if (!mario->is_active()) {
 				break;
 			} else if (!obj->is_active()) {

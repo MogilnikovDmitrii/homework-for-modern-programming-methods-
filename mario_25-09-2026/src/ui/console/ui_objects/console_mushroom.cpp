@@ -6,5 +6,5 @@ ConsoleMushroom::ConsoleMushroom(const Coord& top_left, const int width, const i
 	: Mushroom(top_left, width, height) {}
 
 char ConsoleMushroom::get_brush() const noexcept {
-	return '@';
+	return 'W';
 }

@@ -17,7 +17,11 @@ biv::Speed Mario::get_speed() const noexcept {
 
 void Mario::jump() noexcept {
 	if (vspeed == 0) {
-		vspeed = powered_up_ ? -1.1f : JUMP_SPEED;
+		if (powered_up_) {
+			vspeed = -1.1f;
+		} else {
+			vspeed = JUMP_SPEED;
+		}
 	}
 }
 
@@ -44,7 +48,11 @@ void Mario::process_horizontal_static_collision(Rect* obj) noexcept {
 	move_horizontally();
 }
 
-void Mario::process_mario_collision(Collisionable* mario) noexcept {}
+void Mario::process_mario_collision(Collisionable* obj) noexcept {
+	if (obj != nullptr && obj->get_mario_collision_effect() == MarioCollisionEffect::MUSHROOM) {
+		eat_mushroom();
+	}
+}
 
 void Mario::process_vertical_static_collision(Rect* obj) noexcept {
 	if (vspeed > 0) {

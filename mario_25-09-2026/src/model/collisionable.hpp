@@ -4,6 +4,11 @@
 #include "speed.hpp"
 
 namespace biv {
+	enum class MarioCollisionEffect {
+		NONE,
+		MUSHROOM
+	};
+
 	class Collisionable {
 		protected:
 			bool is_active_ = true;
@@ -15,6 +20,9 @@ namespace biv {
 
 			virtual Rect get_rect() const noexcept = 0;
 			virtual Speed get_speed() const noexcept = 0;
+			virtual MarioCollisionEffect get_mario_collision_effect() const noexcept {
+				return MarioCollisionEffect::NONE;
+			}
 
 			virtual void process_horizontal_static_collision(Rect*) noexcept = 0;
 			virtual void process_mario_collision(Collisionable*) noexcept = 0;
